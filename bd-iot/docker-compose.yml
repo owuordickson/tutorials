@@ -6,8 +6,8 @@ services:
       volumes:
         - nodered_data:/data
       ports:
-        - "1880:1880"
-      container_name: node-red
+        - "1881:1880"
+      container_name: nodered
 
     zookeeper:
       image: 'bitnami/zookeeper:latest'
@@ -28,10 +28,27 @@ services:
         - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
         - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
         - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
+        - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
         # - KAFKA_BROKER_ID=1
       depends_on:
         - zookeeper
       container_name: kafka
+
+    # create kafka IoT topic
+    kafka-init:
+      image: 'bitnami/kafka:latest'
+      command: [ "/bin/bash", "-c", "chmod +x /mqtt_topic.sh && sh /mqtt_topic.sh"]
+      environment:
+        - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+        - IOT_TOPIC_NAME=iot-temp
+      depends_on:
+        - kafka
+      volumes:
+        - type: bind
+          source: ./mqtt_topic.sh
+          target: /mqtt_topic.sh
+      init: true
+      container_name: kafka-init
 
 volumes:
     nodered_data: {}
