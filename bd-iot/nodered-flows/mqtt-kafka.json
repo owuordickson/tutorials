@@ -1,0 +1,259 @@
+[
+    {
+        "id": "f6f2187d.f17ca8",
+        "type": "tab",
+        "label": "MQTT with Kafka",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "cd98af2ba6d25225",
+        "type": "aedes broker",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "mqtt_port": 1883,
+        "mqtt_ws_bind": "port",
+        "mqtt_ws_port": null,
+        "mqtt_ws_path": "",
+        "cert": "",
+        "key": "",
+        "certname": "",
+        "keyname": "",
+        "persistence_bind": "memory",
+        "dburl": "",
+        "usetls": false,
+        "x": 370,
+        "y": 80,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "ae62fa4b43acaff1",
+        "type": "mqtt out",
+        "z": "f6f2187d.f17ca8",
+        "name": "publisher",
+        "topic": "iot/temp",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "b8de56e1ebf9fdbd",
+        "x": 420,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "b1c8f21bfde26bc9",
+        "type": "mqtt in",
+        "z": "f6f2187d.f17ca8",
+        "name": "subscriber",
+        "topic": "iot/temp",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "b8de56e1ebf9fdbd",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 80,
+        "y": 380,
+        "wires": [
+            [
+                "c65dbe3890cbc0f7"
+            ]
+        ]
+    },
+    {
+        "id": "e45c48215018374f",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "25",
+        "payloadType": "num",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "ae62fa4b43acaff1",
+                "806731a0861d8709"
+            ]
+        ]
+    },
+    {
+        "id": "83219b7ce583e5c3",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "MQTT Subscriber OUT",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 700,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "806731a0861d8709",
+        "type": "Kafka Producer",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "broker": "4cdcbff9d8aa97dd",
+        "topic": "iot-temp",
+        "topicSlash2dot": false,
+        "requireAcks": 1,
+        "ackTimeoutMs": 100,
+        "partitionerType": 0,
+        "key": "",
+        "partition": 0,
+        "attributes": 0,
+        "connectionType": "Producer",
+        "convertFromJson": false,
+        "x": 420,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "daccc642dc242465",
+        "type": "Kafka Consumer",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "broker": "4cdcbff9d8aa97dd",
+        "regex": false,
+        "topics": [
+            {
+                "topic": "iot-temp",
+                "offset": 0,
+                "partition": 0
+            }
+        ],
+        "groupId": "kafka-node-group",
+        "autoCommit": "true",
+        "autoCommitIntervalMs": 5000,
+        "fetchMaxWaitMs": 100,
+        "fetchMinBytes": 1,
+        "fetchMaxBytes": 1048576,
+        "fromOffset": 0,
+        "encoding": "utf8",
+        "keyEncoding": "utf8",
+        "connectionType": "Consumer",
+        "convertToJson": false,
+        "x": 340,
+        "y": 500,
+        "wires": [
+            [
+                "d32312def7e73385"
+            ]
+        ]
+    },
+    {
+        "id": "d32312def7e73385",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "Kafka Consumer OUT",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 680,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "c65dbe3890cbc0f7",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "function 1",
+        "func": "msg.payload = \"MQTT subscriber received: \" + msg.payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 380,
+        "wires": [
+            [
+                "83219b7ce583e5c3"
+            ]
+        ]
+    },
+    {
+        "id": "b8de56e1ebf9fdbd",
+        "type": "mqtt-broker",
+        "name": "MQTT Broker",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "4cdcbff9d8aa97dd",
+        "type": "Kafka Broker",
+        "name": "Kafka Broker",
+        "hosts": [
+            {
+                "host": "kafka",
+                "port": 9092
+            }
+        ],
+        "hostsEnvVar": "",
+        "connectTimeout": "10000",
+        "requestTimeout": "30000",
+        "autoConnect": "true",
+        "idleConnection": "5",
+        "reconnectOnIdle": "true",
+        "maxAsyncRequests": "10",
+        "checkInterval": "10",
+        "selfSign": true,
+        "usetls": false,
+        "useCredentials": false
+    }
+]

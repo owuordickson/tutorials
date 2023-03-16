@@ -37,7 +37,7 @@ services:
     # create kafka IoT topic
     kafka-init:
       image: 'bitnami/kafka:latest'
-      command: [ "/bin/bash", "-c", "chmod +x /mqtt_topic.sh && sh /mqtt_topic.sh"]
+      command: [ "/bin/bash", "-c", "chmod +x /kafka_topic.sh && sh /kafka_topic.sh"]
       environment:
         - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
         - IOT_TOPIC_NAME=iot-temp
@@ -45,8 +45,8 @@ services:
         - kafka
       volumes:
         - type: bind
-          source: ./mqtt_topic.sh
-          target: /mqtt_topic.sh
+          source: ./configs/kafka_topic.sh
+          target: /kafka_topic.sh
       init: true
       container_name: kafka-init
 
