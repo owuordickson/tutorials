@@ -1,0 +1,146 @@
+---
+title: "FPM with R"
+author: 'Author: Dickson Owuor (Ph.D.)'
+date: "30/06/2022"
+output: 
+  html_notebook:
+    toc: yes
+    number_sections: false
+---
+
+
+# Descriptive data mining
+Descriptive data mining concentrates on identifying rules (i.e., association) that describe specific patterns within the data.In this tutorial, we practice extracting frequent patterns. Frequent patterns can be described as the frequent item sets that appear in a data set's transactions.
+
+In this tutorial, we use the following libraries to allow us extract frequent patterns from data set *Groceries*:
+
+* [CRAN arules library](https://cran.r-project.org/web/packages/arules/index.html): package provides the infrastructure for extracting frequent patterns
+* [CRAN arulesViz library](https://cran.r-project.org/web/packages/arulesViz/index.html): package is used for visualizing Association Rules and Frequent item sets
+* [CRAN RColorBrewer library](https://cran.r-project.org/web/packages/RColorBrewer/index.html): provides color schemes for maps and other graphics
+
+
+
+# Installation of libraries
+Install and load the **arules**, **arulesViz**, **RColorBrewer** package libraries.
+
+```{r eval=FALSE}
+install.packages("arules")
+install.packages("arulesViz")
+install.packages("RColorBrewer")
+
+
+# Loading Libraries
+library(arules)
+library(arulesViz)
+library(RColorBrewer)
+```
+
+# Usage and documentation
+
+
+```{r eval=FALSE}
+??arules
+??arulesViz
+??RColorBrewer
+
+```
+
+# Loading data set(s)
+We can use the **data()** function to load or check available data sets provided by our installed libraries.
+
+
+```{r eval=FALSE}
+?data  # check examples to understand usage
+data() # check out available data sets in the arules package
+
+
+data(Groceries) # 1. Load the Groceries data set (without this, you cannot use the data set)
+summary(Groceries) # 2. Get a summary of the  data set
+inspect(Groceries[1:10]) # 3. using inspect() function to get the first 10 transactions
+
+```
+
+# Quick statistics of frequent items
+We can use the **itemFrequencyPlot()** function to create a bar plot for item frequencies. Here, *'topN=20'* means that 20 items with the highest item frequency/ lift will be plotted.
+
+```{r eval=FALSE}
+?itemFrequencyPlot
+??brewer.pal  # Click on RColorBrewer::brewer.pal	
+
+
+arules::itemFrequencyPlot(Groceries, 
+                          topN = 20, 
+                          col = brewer.pal(8, 'Pastel2'),
+                          main = 'Relative Item Frequency Plot',
+                          type = "absolute", #use relative or absolute
+                          ylab = "Item Frequency (Relative)")
+```
+
+# The APRIORI algorithm
+This algorithm is the most popular algorithm that is used to mine frequent item sets and  association rules. We use the **apriori()** function to extract frequent association rules from data set **Groceries**.
+
+```{r eval=FALSE}
+?apriori
+
+rules <- apriori(Groceries, parameter = list(supp = 0.001, conf = 0.8))
+rules
+inspect(rules)
+
+```
+
+We observe about 410 rules are found. In order to have a more detailed view of the extracted rules, we can sort the rules and use **inspect()** function.
+
+
+```{r eval=FALSE}
+# Sort the rules
+rules_conf <- sort(rules, by="confidence", decreasing=TRUE)
+
+# Show the support, lift and confidence for all rules
+inspect(head(rules_conf))
+
+```
+
+We can configure the type of rules we would like to see like this:
+
+
+```{r eval=FALSE}
+# Scenario 1. Let's show one item (whole milk) instead on the right hand side(rhs)
+rules<-apriori(data=Groceries, parameter=list(supp=0.001,conf = 0.08), 
+               appearance = list(default="lhs",rhs="whole milk"),
+               control = list(verbose=F))
+rules<-sort(rules, decreasing=TRUE,by="confidence")
+inspect(rules[1:10])
+
+
+
+# Scenario 2. Let's show one item (whole milk) instead on the left hand side (lhs)
+rules<-apriori(data=Groceries, parameter=list(supp=0.001,conf = 0.08,minlen=2), 
+               appearance = list(default="rhs",lhs="whole milk"),
+               control = list(verbose=F))
+rules<-sort(rules, decreasing=TRUE,by="confidence")
+inspect(rules[1:10])
+
+```
+
+
+# Plotting frequent patterns
+We can plot a graph for visualizing the extracted rules.
+
+```{r eval=FALSE}
+?plot # provided by arulesViz
+plot(rules, method="graph", interactive=TRUE, shading=NULL)
+
+```
+
+
+# Questions
+1. What happens when you increase support to 0.1? Explain what could have cause what you have observed.
+2. Explain the difference between association rules and frequent patterns.
+
+
+# Exercise
+This exercise is an assignment and you are required to:
+
+a. Use the **arules** library package to mine frequent patterns from the **Groceries** data set.
+b. Display the first 10 frequent patterns extracted above.
+c. Extract frequent patterns with only these items ("honey", "whole milk", "yogurt"). What is the support?

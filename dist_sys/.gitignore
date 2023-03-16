@@ -1,0 +1,3 @@
+# ignore data folder
+VMs/
+.ipynb_checkpoints

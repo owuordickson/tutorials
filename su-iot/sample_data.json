@@ -1,0 +1,52 @@
+{
+	"name": "IoT Sensor Data",
+	"sensor": [{
+			"sensor": "temperature",
+			"data": [{
+					"time": 1200,
+					"value": 25
+				},
+				{
+					"time": 1201,
+					"value": 23
+				},
+				{
+					"time": 1202,
+					"value": 24
+				},
+				{
+					"time": 1203,
+					"value": 27
+				},
+				{
+					"time": 1204,
+					"value": 25
+				}
+			]
+		},
+		{
+			"sensor": "humidity",
+			"data": [{
+					"time": 1430,
+					"value": 10
+				},
+				{
+					"time": 1431,
+					"value": 12
+				},
+				{
+					"time": 1432,
+					"value": 9
+				},
+				{
+					"time": 1447,
+					"value": 6
+				},
+				{
+					"time": 1448,
+					"value": 17
+				}
+			]
+		}
+	]
+}

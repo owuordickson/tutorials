@@ -1,0 +1,135 @@
+---
+title: "Modelling Data Streams with R"
+author: 'Author: Dickson Owuor (Ph.D.)'
+date: "13/06/2022"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Modelling Data Streams with R}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## About Data streams
+
+A data stream is a continuous sequence of data points generated from a non-stationary process. In this tutorial, we learn how to use **stream** R library to simulate and model data streams. The tutorial is adopted from these works:
+
+-   [R package stream](https://github.com/mhahsler/stream)
+
+-   [MLPack for Hoeffding Tree](https://search.r-project.org/CRAN/refmans/mlpack/html/hoeffding_tree.html)
+
+## Outline
+
+1.  Installation of libraries
+2.  Usage and documentation
+3.  Setting up data streams and visualization
+4.  Clustering data streams
+5.  Writing and reading data streams from files
+6.  Classifying data streams (assignment)
+
+### 1. Installing libraries
+
+Note: un-comment the lines if the libraries ARE NOT installed on your system.
+
+```{r eval=FALSE}
+#install.packages("stream")
+#install.packages("animation") # for animating data streams
+#install.packages("mlpack") # for hoeffding-tree algorithm
+any(grepl("stream", installed.packages())) # Check if installed (TRUE)
+
+# Load the libraries
+library("stream")
+library("mlpack")
+
+```
+
+### 2. Usage and documentation
+
+In order to find out about the **stream** R library, we can use the *help* command.
+
+```{r eval=FALSE}
+??stream # Use help to check out the documentation
+```
+
+Here is the [CRAN URL](https://cran.r-project.org/web/packages/stream/index.html).
+
+### 3. Setting up data streams and visualization
+
+We can create dummy data streams from functions such as *DSD_Benchmark* or from real world data sets (i.e., *cassini*).
+
+```{r eval=FALSE}
+stream1 <- DSD_Benchmark(1) 
+animate_data(stream1, horizon=100, n=5000, xlim=c(0,1), ylim=c(0,1))
+
+# Cassini dataset
+stream2 <- DSD_mlbenchGenerator("cassini")
+animate_data(stream2)
+```
+
+### 4. Clustering data streams
+
+In order to cluster data streams, we first create a random data stream with 3 Gaussian clusters and 10% noise.
+
+```{r eval=FALSE}
+set.seed(2000)
+stream3 <- DSD_Gaussians(k = 3, noise = 0.1)
+
+plot(stream3)
+
+```
+
+Next, we cluster a stream of 1000 points using *D-Stream* function.
+
+```{r eval=FALSE}
+dstream <- DSC_DStream(gridsize = 0.1)
+update(dstream, stream3, 1000)
+
+plot(dstream, stream3, grid = TRUE)
+
+```
+
+### 5. Writing and reading data streams from files
+
+First, we create a data stream and write it to disk.
+
+```{r eval=FALSE}
+stream4 <- DSD_Gaussians(k=3, d=5, outliers=1, space_limit=c(0,2), outlier_options = list(outlier_horizon=10))
+
+write_stream(stream4, "data.txt", n=10, header = TRUE, sep=",", class=TRUE, write_outliers=TRUE)
+
+
+```
+
+Next, we read the same data stream back (as a loop)
+
+```{r eval=FALSE}
+stream5 <- DSD_ReadCSV(k=3, o=1, "data.txt", sep=",", header = TRUE, loop=TRUE, class="class", outlier="outlier") 
+animate_data(stream2)
+
+```
+
+### 6. Classifying data streams (assignment)
+
+The last exercise in this tutorial involves classifying data streams using the **hoeffding-tree**. We use the *MLPack* R library: [MLPack CRAN Library](https://search.r-project.org/CRAN/refmans/mlpack/html/hoeffding_tree.html).
+
+This exercise is an assignment in which you are required to:
+
+a.  Identify the error in the lines of code below, and
+
+b.  rectify them to get the correct output.
+
+```{r eval=FALSE}
+# Documentation
+??hoeffding_tree
+
+# Classification
+output <- mlpack::hoeffding_tree(training=stream2, confidence=0.99)
+tree <- output$output_model
+
+```

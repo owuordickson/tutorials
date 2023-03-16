@@ -1,0 +1,94 @@
+---
+title: "Web Scrapping with R"
+author: 'Author: Dickson Owuor (Ph.D.)'
+date: "28/06/2022"
+output: 
+  html_notebook:
+    toc: yes
+    number_sections: false
+---
+
+
+# Data extraction
+Data is increasingly becoming the lifeblood of the digital economy and as most companies transit into online businesses, the importance of data is increasing rapidly. For data to be useful, it has to be collected and transformed into a form suitable for analysis.
+
+Data extraction is the process of retrieving data from data sources for further data processing or storage. In this tutorial, we use the **rvest** R library to perform Web scrapping on a Wikipedia page. Web scrapping is an example technique used for data extraction. The tutorial is adopted from:
+
+* [CRAN rvest library](https://cran.r-project.org/web/packages/rvest/index.html)
+
+
+# Installation of libraries
+Install and load the **rvest** package.
+
+```{r eval=FALSE}
+install.packages("rvest")
+library(rvest)
+
+```
+
+# Usage and documentation
+
+```{r eval=FALSE}
+??rvest
+
+```
+
+# Selecting URL and reading HTML content
+We begin the extraction process by specifying the URL of interest and reading its contents.
+
+```{r eval=FALSE}
+wikiurl<-read_html("https://en.wikipedia.org/wiki/List_of_highest-grossing_films")
+
+```
+
+# Filtering data of interest
+In this tutorial, we are interested in scrapping *'movie charts'* tables from the URL. 
+
+```{r eval=FALSE}
+# Get the movie charts from wikipedia url using html_table function
+moviecharts <- html_table(wikiurl)
+
+```
+
+# Selecting data of interest
+There are multiple tables in the page, we specify the one we need and store it in a data-frame.
+
+```{r eval=FALSE}
+moviecharts[[4]]
+
+
+#Put the movie chart into a data-frame
+highestgrossfilms<-data.frame(moviecharts[[4]])
+highestgrossfilms
+
+#Numbers of rows and columns
+dim(highestgrossfilms)
+
+```
+
+# Writing interesting data to file
+In order to write our data into a CSV file, check your working directory and set it to your desired location. Then, we can write the data into the CSV file.
+
+```{r eval=FALSE}
+getwd()
+setwd("C:/Users/OwuorJnr/Desktop") # change this section to yours
+
+write.csv(highestgrossfilms,"gross.csv", row.names = TRUE)
+```
+
+# Questions
+1. Which data output methods have been used in this exercise?
+2. Is the data selected and saved in the CSV file, structured, unstructured or semi-structured? Explain your answer.
+3. What type of logical extraction has been applied in this exercise? Explain your answer.
+4. What type of physical extraction has been applied in this exercise? Explain your answer.
+5. Briefly describe the ETL tasks that have been implemented in this exerxise. Which ones are missing?
+
+# Exercise
+This exercise is an assignment and you are required to:
+
+a. Identify any Web page of your interest and perform all the steps above to scrap data of interest to you, and
+
+b. store it into a data-frame and write it into a CSV file.
+
+
+

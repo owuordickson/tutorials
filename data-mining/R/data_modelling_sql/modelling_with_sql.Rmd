@@ -1,0 +1,207 @@
+---
+title: "Data Modelling with SQL using R"
+author: 'Author: Dickson Owuor (Ph.D.)'
+date: "06/07/2022"
+output: 
+  html_notebook:
+    toc: yes
+    number_sections: false
+---
+
+# Structured Query Language (SQL)
+SQL is a standardized programming language that is used to manage relational databases and perform various operations on the data in them.
+
+**RMariaDB** is a database interface and MariaDB driver for R. This version is aimed at full compliance with the DBI specification, as a replacement for the old RMySQL package. For more information, visit RMariaDB’s official site: <http://rmariadb.r-dbi.org>. Apart from the **RMariaDB** package library, we also use the following libraries:
+
+* [CRAN DBI library](https://cran.r-project.org/web/packages/DBI/index.html): provides a database interface definition for communication between R and relational database management systems (in this case MariaDB).
+* [CRAN dbplyr library](): a back end for databases that allows you to work with remote database tables as if they are in-memory data frames.
+
+
+# Installing MariaDB
+Before attempting any task in this tutorial, you need to install **MariaDB Server** in your Computer. Follow the steps that follow.
+
+### Windows and Linux Machines
+Direct downloads and installations are available. Follow this link to download and install **MariaDB**:
+
+* <https://www.mariadbtutorial.com/getting-started/install-mariadb/>.
+
+### MacOS Machines
+At the time of creation of this tutorial, no options for directly downloading and installing **MariaDB** exist. However, it is possible to install it via **Homebrew** software package management tool.
+
+* Install **Homebrew** via this link <https://brew.sh/>
+* After installing Homebrew, **MariaDB Server** can be installed with this command:
+
+```{bash eval=FALSE}
+brew install mariadb
+```
+
+After installation, start MariaDB Server:
+
+```{bash eval=FALSE}
+mariadb  # starts the server, press Ctrl-C to stop it
+
+# Statement to change password of root user
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'YOURNEWPASSWORD';
+
+```
+
+
+# Installation of libraries
+Install and load the following package libraries.
+
+```{r eval=FALSE}
+install.packages("RMariaDB")
+install.packages("DBI")
+install.packages("dbplyr")
+
+
+library(RMariaDB)
+library(DBI)
+library(dplyr)
+library(dbplyr)
+
+```
+
+# Usage and documentation
+
+```{r eval=FALSE}
+??RMariaDB
+
+```
+
+# Making a DB connection
+In order to connect our R program to a remote database, we need to specify the following 5 configurations:
+
+1. Driver - See the Drivers section for setup information
+2. Host (or server) URL - A network path to the database server
+3. Username - User name used to access MySQL server
+4. Password - The password corresponding to the provided UID
+5. Port number - normally it is 3306
+
+
+```{r eval=FALSE}
+?dbConnect
+  
+con <- dbConnect(
+  drv = RMariaDB::MariaDB(), 
+  username = "root",
+  password = "", 
+  host = "localhost", 
+  port = 3306
+)
+
+```
+
+
+# R Commands for manipulating DBs
+R uses a number of commands for performing numerous tasks on databases (mostly from the **DBI** library). Here are a few commands:
+
+* The default **dbCreateTable** method calls sqlCreateTable() and dbExecute().
+* **dbExecute**: Execute an update statement, query number of rows affected, and then close result set.
+* **dbGetQuery** always returns a data.frame with as many rows as records were fetched and as many columns as fields in the result set, even if the result is a single value or has one or zero rows.
+
+A comprehensive list of commands can be found in: [https://rdrr.io/cran/DBI/](https://rdrr.io/cran/DBI/)
+
+
+```{r eval=FALSE}
+?dbCreateTable
+?dbExecute
+?dbGetQuery
+
+```
+
+# Manipulating DBs
+The rest of this tutorial guides you on how to invoke various SQL statements from your **R script**.
+
+
+### Create a DB
+Invoke the following statement to create a new database.
+
+```{sql eval=FALSE}
+dbExecute(con, "CREATE DATABASE IF NOT EXISTS dsaDB;")
+
+```
+
+### Initiate the database
+Use the connection object to choose the database to manipulate.
+
+```{r eval=FALSE}
+dbExecute(con, "USE dsaDB;")
+
+```
+
+### Creating a table
+The following example creates a table called *"Persons"* that contains five attributes: PersonID, LastName, FirstName, Address, and City:
+
+The datatype parameter specifies the type of data the column can hold (e.g., varchar, integer, date, etc.)
+
+```{sql eval=FALSE}
+dbExecute(con, 
+"CREATE TABLE IF NOT EXISTS Persons (
+  PersonID int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  LastName varchar(255),
+  FirstName varchar(255),
+  Address varchar(255),
+  City varchar(255)
+);")
+
+```
+
+
+### Inserting records into a table
+In order to add multiple rows into a table at once, use the following INSERT statement:
+
+```{sql eval=FALSE}
+dbExecute(con, 
+"INSERT IGNORE INTO Persons (PersonID, LastName, FirstName, Address, City)
+VALUES 
+(1,'Erichsen','Tom ','1 Stavanger 4006','Oslo'),
+(2,'Philips','James ','21 Folks Rd','Johannesburg'),
+(3,'Lee','Kim ','2 Greg Rd','Nairobi'),
+(4,'Doe','John ','55 Yawn Rd','Pretoria'),
+(5,'Marks','Cindy ','22 Folks Rd','Abuja');")
+
+```
+
+The SELECT statement fetches all the records from the "Persons" table:
+
+```{sql eval=FALSE}
+dbGetQuery(con, "SELECT * FROM Persons;")
+
+```
+
+
+### Update records in a table
+
+The UPDATE statement modifies the first customer (PersonID = 1) with a new last name and a new city.
+
+
+```{sql eval=FALSE}
+dbExecute(con, 
+"UPDATE Persons
+SET LastName = 'Schmidt', City= 'Frankfurt'
+WHERE PersonID = 1;")
+
+```
+
+
+### Using aliases
+The SELECT statement creates an alias for LastName column as *"Surname"*. Note: It requires double quotation marks if the alias name contains spaces:
+
+```{sql eval=FALSE, connection=con}
+dbGetQuery(con, "SELECT LastName AS 'Surname' FROM Persons;")
+
+```
+
+
+
+
+# Questions
+1. Using an example, describe the difference in usage between the **RMariaDB** package library and the **DBI** package library.
+2. What functionality has the **dbplyr** added to this tutorial?
+
+# Exercise
+This exercise is an assignment and you are required to:
+
+a. Assume that a person can have one or more addresses, normalize the *"Persons"* in database **dsaDB** in order to capture this idea.
+

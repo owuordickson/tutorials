@@ -1,0 +1,3 @@
+the quick brown fox jumped over the lazy dog.
+hello! how are you? I will be quick to jump over this.
+this is a Masters unit named 'data mining, storage and retrieval'. the Masters course is named "data science". there are about 50 quick students in this class.
