@@ -1,0 +1,22 @@
+version: '3'
+services:
+
+  namenode:
+    image: owuor/hdfs-namenode
+    container_name: hdfs-namenode
+    ports:
+      - "9000:9000"
+      - "2222:22"
+      - "50070:50070"
+    volumes:
+      - ./data:/hadoop/data
+    environment:
+      - "HADOOP_CONF_DIR=/etc/hadoop"
+      - "USER=root"
+
+  zeppelin:
+    image: owuor/zeppelin
+    container_name: zeppelin
+    port:
+      - "8083:8080"
+

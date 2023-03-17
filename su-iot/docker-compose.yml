@@ -1,7 +1,8 @@
 version: '2'
 services:
     influxdb:
-      image: influxdb:2.0
+      image: influxdb:latest # 2.0
+      container_name: influx-db
       volumes:
         - influxdb_data:/var/lib/influxdb2
         - influxdb_conf:/etc/influxdb2
@@ -15,18 +16,26 @@ services:
         DOCKER_INFLUXDB_INIT_BUCKET: iot_bucket
         DOCKER_INFLUXDB_INIT_RETENTION: 1w
         DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: my-super-secret-auth-token
-      container_name: influx-db
+      networks:
+        - net_iot
       
     node-red:
-      image: nodered/node-red
+      image: nodered/node-red:latest
+      container_name: node-red
       volumes:
         - nodered_data:/data
       ports:
         - "1880:1880"
       depends_on:
         - influxdb
-      container_name: node-red
+      networks:
+        - net_iot
 volumes:
     nodered_data: {}
     influxdb_data: {}
     influxdb_conf: {}
+
+networks:
+  net_iot:
+    name: net_iot
+    driver: bridge

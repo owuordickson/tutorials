@@ -1,0 +1,172 @@
+{
+  "paragraphs": [
+    {
+      "text": "%spark\nspark.version",
+      "user": "anonymous",
+      "dateUpdated": "2023-01-22 08:26:05.999",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mres1\u001b[0m: \u001b[1m\u001b[32mString\u001b[0m \u003d 3.1.1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1673875652929_1135860880",
+      "id": "paragraph_1673875652929_1135860880",
+      "dateCreated": "2023-01-16 13:27:32.929",
+      "dateStarted": "2023-01-22 08:26:06.033",
+      "dateFinished": "2023-01-22 08:26:24.228",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n!python --version",
+      "user": "anonymous",
+      "dateUpdated": "2023-01-22 08:28:24.770",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Python 3.7.12\r\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1674375991937_1340659483",
+      "id": "paragraph_1674375991937_1340659483",
+      "dateCreated": "2023-01-22 08:26:31.937",
+      "dateStarted": "2023-01-22 08:28:24.787",
+      "dateFinished": "2023-01-22 08:28:31.390",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\nimport sys\nprint(sys.version_info)\n\nfrom pyspark.sql import SparkSession\n\n# Create a SparkSession\nspark \u003d SparkSession.builder.appName(\"Example Of Dataframe\").getOrCreate()\n\n# Create the data for the dataframe\ndata \u003d [(1, \"John\", \"Doe\"), (2, \"Jane\", \"Doe\"), (3, \"Bob\", \"Smith\"), (4, \"Alice\", \"Johnson\"), (5, \"Charlie\", \"Brown\"), (6, \"David\", \"Jones\"),\\\n         (7, \"Eve\", \"White\"), (8, \"Fred\", \"Garcia\"), (9, \"Gina\", \"Green\"), (10, \"Harry\", \"Harris\")]\n\n# Create the dataframe\ndf \u003d spark.createDataFrame(data, [\"id\", \"first_name\", \"last_name\"])\n\n# Show the dataframe\ndf.show()",
+      "user": "anonymous",
+      "dateUpdated": "2023-01-22 08:28:34.546",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "sys.version_info(major\u003d3, minor\u003d7, micro\u003d12, releaselevel\u003d\u0027final\u0027, serial\u003d0)\n+---+----------+---------+\n| id|first_name|last_name|\n+---+----------+---------+\n|  1|      John|      Doe|\n|  2|      Jane|      Doe|\n|  3|       Bob|    Smith|\n|  4|     Alice|  Johnson|\n|  5|   Charlie|    Brown|\n|  6|     David|    Jones|\n|  7|       Eve|    White|\n|  8|      Fred|   Garcia|\n|  9|      Gina|    Green|\n| 10|     Harry|   Harris|\n+---+----------+---------+\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://d16725561b54:4040/jobs/job?id\u003d0"
+            },
+            {
+              "jobUrl": "http://d16725561b54:4040/jobs/job?id\u003d1"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1673874252032_114121794",
+      "id": "paragraph_1673874252032_114121794",
+      "dateCreated": "2023-01-16 13:04:12.033",
+      "dateStarted": "2023-01-22 08:28:34.567",
+      "dateFinished": "2023-01-22 08:28:51.136",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-01-16 13:05:03.033",
+      "progress": 0,
+      "config": {},
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1673874303033_739209992",
+      "id": "paragraph_1673874303033_739209992",
+      "dateCreated": "2023-01-16 13:05:03.033",
+      "status": "READY"
+    }
+  ],
+  "name": "PySpark Project 1",
+  "id": "2HRE88FYR",
+  "defaultInterpreterGroup": "spark",
+  "version": "0.10.1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false
+  },
+  "info": {}
+}

@@ -8,145 +8,29 @@ services:
         - nodered_data:/data
       ports:
         - "1881:1880"
-
-    namenode:
-      image: bde2020/hadoop-namenode:latest # 2.0.0-hadoop2.7.4-java8
-      container_name: namenode
-      volumes:
-        - /tmp/hdfs/namenode:/hadoop/dfs/name
-      environment:
-        - CLUSTER_NAME=bd-iot
-      env_file:
-        - ./configs/hadoop-hive.env
-      ports:
-        - "50070:50070"
-
-    datanode:
-      image: bde2020/hadoop-datanode:latest # 2.0.0-hadoop2.7.4-java8
-      container_name: datanode
-      volumes:
-        - /tmp/hdfs/datanode:/hadoop/dfs/data
-        #- ./bank:/bank
-      env_file:
-        - ./configs/hadoop-hive.env
-      environment:
-        SERVICE_PRECONDITION: "namenode:50070"
-      depends_on:
-        - namenode
-      ports:
-        - "50075:50075"
-
-    hive-server:
-      image: bde2020/hive:latest # 2.3.2-postgresql-metastore
-      container_name: hive-server
-      env_file:
-        - ./configs/hadoop-hive.env
-      environment:
-        HIVE_CORE_CONF_javax_jdo_option_ConnectionURL: "jdbc:postgresql://hive-metastore/metastore"
-        SERVICE_PRECONDITION: "hive-metastore:9083"
-      ports:
-        - "10000:10000"
-      depends_on:
-        - hive-metastore
-
-    hive-metastore:
-      image: bde2020/hive:latest # 2.3.2-postgresql-metastore
-      container_name: hive-metastore
-      env_file:
-        - ./configs/hadoop-hive.env
-      command: /opt/hive/bin/hive --service metastore
-      environment:
-        SERVICE_PRECONDITION: "namenode:50070 datanode:50075 hive-metastore-postgresql:5432"
-      ports:
-        - "9083:9083"
-      depends_on:
-        - hive-metastore-postgresql
-
-    hive-metastore-postgresql:
-      image: bde2020/hive-metastore-postgresql:latest # 2.3.0
-      container_name: hive-metastore-postgresql
-      depends_on:
-        - datanode
-
-    spark-master:
-      image: bde2020/spark-master:latest # 2.4.0-hadoop2.7
-      container_name: spark-master
-      ports:
-        - 8080:8080
-        - 7077:7077
-      environment:
-        - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
-      env_file:
-        - ./configs/hadoop-hive.env
-
-    spark-worker:
-      image: bde2020/spark-worker:latest # 2.4.0-hadoop2.7
-      container_name: spark-worker
-      environment:
-        - SPARK_MASTER=spark://spark-master:7077
-        - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
-        - HIVE_CORE_CONF_javax_jdo_option_ConnectionURL=jdbc:postgresql://hive-metastore/metastore
-      depends_on:
-        - spark-master
-      ports:
-        - 8081:8081
-      env_file:
-        - ./configs/hadoop-hive.env
+      networks:
+        - net_bd
 
     zeppelin:
-      image: openkbs/docker-spark-bde2020-zeppelin
+      image: apache/zeppelin:0.10.1
       container_name: zeppelin
-      environment:
-        CORE_CONF_fs_defaultFS: "hdfs://namenode:8020"
-        SPARK_MASTER: "spark://spark-master:7077"
-        MASTER: "spark://spark-master:7077"
-        SPARK_MASTER_URL: spark://spark-master:7077
-        ZEPPELIN_PORT: 8080
-        ZEPPELIN_JAVA_OPTS:
-          -Dspark.driver.memory=1g
-          -Dspark.executor.memory=2g
+    #  volumes:
+    #    - ./zeppelin/notebook:/opt/zeppelin/notebook
+    #    - ./zeppelin/conf:/opt/zeppelin/conf
       ports:
-        - 19090:8080
-      env_file:
-        - ./configs/hadoop-hive.env
-      volumes:
-        - /tmp/simple-demo/zeppelin/data:/usr/lib/zeppelin/data:rw
-        - /tmp/simple-demo/zeppelin/notebook:/usr/lib/zeppelin/notebook:rw
-      command: /usr/lib/zeppelin/bin/zeppelin.sh
-
-    hue:
-      image: gethue/hue:latest # 20191107-135001
-      hostname: hue
-      container_name: hue
-      dns: 8.8.8.8
-      ports:
-      - "8888:8888"
-      volumes:
-        - ./configs/hue-overrides.ini:/usr/share/hue/desktop/conf/z-hue.ini
-      depends_on:
-      - "database"
-
-    database:
-      image: mysql:latest # 5.7
-      container_name: database
-      ports:
-          - "33061:3306"
-      command: --init-file /data/application/init.sql
-      volumes:
-          - /tmp/mysql/data:/var/lib/mysql
-          - ./init.sql:/data/application/init.sql
-      environment:
-          MYSQL_ROOT_USER: root
-          MYSQL_ROOT_PASSWORD: secret
-          MYSQL_DATABASE: hue
-          MYSQL_USER: root
-          MYSQL_PASSWORD: secret
+        - "8082:8080"
+    #  environment:
+    #    -
+      networks:
+        - net_bd
 
     streamsets:
       image: streamsets/datacollector:3.13.0-latest
       container_name: streamsets
       ports:
         - "18630:18630"
+      networks:
+        - net_bd
 
     zookeeper:
       image: 'bitnami/zookeeper:latest'
@@ -155,6 +39,8 @@ services:
         - '2181:2181'
       environment:
         - ALLOW_ANONYMOUS_LOGIN=yes
+      networks:
+        - net_bd
 
     kafka:
       image: 'bitnami/kafka:latest'
@@ -172,6 +58,8 @@ services:
         # - KAFKA_BROKER_ID=1
       depends_on:
         - zookeeper
+      networks:
+        - net_bd
 
     # create kafka IoT topic
     kafka-init:
@@ -188,6 +76,13 @@ services:
           source: ./configs/kafka_topic.sh
           target: /kafka_topic.sh
       init: true
+      networks:
+        - net_bd
 
 volumes:
     nodered_data: {}
+
+networks:
+  net_bd:
+    name: net_bd
+    driver: bridge
