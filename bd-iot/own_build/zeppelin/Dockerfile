@@ -4,18 +4,19 @@ FROM maven:3.5-jdk-8 as builder
 
 # ARG BRANCH="master"
 ARG SCALA_VER="2.11"
-ARG SPARK_VER="2.2"
+ARG SPARK_VER="2.0"
 # ARG VERSION="0.8.0-SNAPSHOT"
 
 ENV ZEPPELIN_VERSION=$VERSION \
     ZEPPELIN_SRC="/usr/src/zeppelin"
 
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
-	&& apt-get update && apt-get install -y --no-install-recommends \
+RUN curl -fsSL https://deb.nodesource.com/setup_8.x | bash - \
+	&& apt-get update && apt-get install -y  --no-install-recommends\
 		git \
 		nodejs \
 		python3 python3-setuptools \
-    r-base-dev r-cran-evaluate \
+    	r-base-dev \
+		r-cran-evaluate \
 	&& rm -rf /var/lib/apt/lists/* \
   && mkdir -p $ZEPPELIN_SRC \
   && git clone https://github.com/apache/zeppelin.git $ZEPPELIN_SRC
@@ -41,7 +42,7 @@ RUN mvn --batch-mode package -DskipTests -Dcheckstyle.skip \
 
 ################################################################################
 ### STAGE 2: Create the Runtime Container ###
-FROM openjdk:8
+FROM openjdk:8u222-stretch
 
 ENV ZEPPELIN_SRC="/usr/src/zeppelin" \
 	ZEPPELIN_HOME="/opt/zeppelin" \
@@ -55,13 +56,13 @@ VOLUME $ZEPPELIN_CONF_DIR \
        $ZEPPELIN_HOME/logs \
        $ZEPPELIN_HOME/notebook
 
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
-	&& apt-get update && apt-get install -y --no-install-recommends \
-		curl \
-    jq \
+
+RUN curl -fsSL https://deb.nodesource.com/setup_8.x | bash - \
+	&& apt-get update && apt-get install -y  --no-install-recommends\
+		git \
 		nodejs \
 		python3 python3-pip \
-    r-base-dev r-cran-evaluate \
+    	r-base-dev r-cran-evaluate \
 	&& rm -rf /var/lib/apt/lists/* \
   && update-alternatives --install /usr/bin/python python /usr/bin/python2 1 \
   && update-alternatives --install /usr/bin/python python /usr/bin/python3 2 \

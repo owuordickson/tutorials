@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM openjdk:8u222-stretch
 
 RUN apt-get update && apt-get install -y software-properties-common ssh net-tools ca-certificates tar rsync sed
 
