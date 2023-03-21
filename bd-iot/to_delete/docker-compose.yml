@@ -1,12 +1,10 @@
 version: '3'
 services:
-  
-    node-red:
-      image: nodered/node-red
-      container_name: nodered
-      volumes:
-        - nodered_data:/data
-      ports:
+
+  namenode:
+    image: owuor/hdfs-namenode
+    container_name: hdfs-namenode
+    ports:
         - "1881:1880"
       networks:
         - net_bd
@@ -207,22 +205,12 @@ services:
       container_name: kafka-init
       command: [ "/bin/bash", "-c", "chmod +x /kafka_topic.sh && sh /kafka_topic.sh"]
       environment:
-        - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-        - IOT_TOPIC_NAME=iot-temp
-      depends_on:
-        - kafka
-      volumes:
-        - type: bind
-          source: ./configs/kafka_topic.sh
-          target: /kafka_topic.sh
-      init: true
-      networks:
-        - net_bd
+      - "HADOOP_CONF_DIR=/etc/hadoop"
+      - "USER=root"
 
-volumes:
-    nodered_data: {}
+  zeppelin:
+    image: owuor/zeppelin
+    container_name: zeppelin
+    port:
+      - "8083:8080"
 
-networks:
-  net_bd:
-    name: net_bd
-    driver: bridge

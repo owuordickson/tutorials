@@ -10,7 +10,7 @@ COPY config /root/.ssh/
 RUN cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
 RUN chmod 0600 ~/.ssh/authorized_keys
 
-RUN wget --no-verbose http://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz && tar -xvzf hadoop-3.3.4.tar.gz && mv hadoop-3.3.4 hadoop && rm hadoop-3.3.4.tar.gz && rm -rf hadoop/share/doc/*
+RUN wget https://archive.apache.org/dist/hadoop/core/hadoop-2.7.7/hadoop-2.7.7.tar.gz && tar -xvzf hadoop-2.7.7.tar.gz && mv hadoop-2.7.7 hadoop && rm hadoop-2.7.7.tar.gz && rm -rf hadoop/share/doc/*
 RUN ln -s /hadoop/etc/hadoop /etc/hadoop
 RUN mkdir -p /logs
 RUN mkdir /hadoop-data

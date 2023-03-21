@@ -11,12 +11,33 @@ services:
       networks:
         - net_bd
 
+    namenode:
+      image: owuor/hdfs-namenode
+      container_name: hdfs-namenode
+      ports:
+        - "9000:9000"
+        - "2222:22"
+        - "50070:50070"
+      volumes:
+        - ./configs/hadoop_data:/hadoop/data
+      environment:
+        - "HADOOP_CONF_DIR=/etc/hadoop"
+        - "USER=root"
+        #- "HDFS_NAMENODE_USER=root"
+        #- "HDFS_DATANODE_USER=root"
+        #- "HDFS_SECONDARYNAMENODE_USER=root"
+        #- "YARN_RESOURCEMANAGER_USER=root"
+        #- "YARN_NODEMANAGER_USER=root"
+      networks:
+        - net_bd
+
     zeppelin:
-      image: apache/zeppelin:0.10.1
+      image: apache/zeppelin:0.8.0
       container_name: zeppelin
-    #  volumes:
-    #    - ./zeppelin/notebook:/opt/zeppelin/notebook
-    #    - ./zeppelin/conf:/opt/zeppelin/conf
+      volumes:
+        - ./configs/zeppelin/notebook:/opt/zeppelin/notebook
+        - ./configs/zeppelin/conf:/opt/zeppelin/conf
+        - zeppelin_logs:/opt/zeppelin/logs
       ports:
         - "8082:8080"
     #  environment:
@@ -81,6 +102,7 @@ services:
 
 volumes:
     nodered_data: {}
+    zeppelin_logs: {}
 
 networks:
   net_bd:
