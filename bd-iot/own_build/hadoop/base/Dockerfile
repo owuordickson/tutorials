@@ -1,4 +1,3 @@
-# FROM debian:9
 FROM openjdk:8u222-stretch
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -14,11 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       libsnappy-dev \
     && rm -rf /var/lib/apt/lists/* 
       
-# ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
 ENV JAVA_HOME=/usr/local/openjdk-8
-
-#RUN curl -O https://dist.apache.org/repos/dist/release/hadoop/common/KEYS
-#RUN gpg --import KEYS
 
 ENV HADOOP_VERSION 3.2.1
 #ENV HADOOP_URL https://www.apache.org/dist/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz
