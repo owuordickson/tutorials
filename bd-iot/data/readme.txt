@@ -20,3 +20,7 @@ In order to upload a CSV file to HDF5, we do the following:
 -------------------------------------------------------------------------
 
 Write IoT data to Hadoop HDF5 using Node-RED and Kafka
+
+1. Create Kafka topic 'iot-temp' from the terminal:
+
+    /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic iot-temp --bootstrap-server kafka:9092

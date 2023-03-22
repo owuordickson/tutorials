@@ -67,7 +67,7 @@ services:
         - net_bd
 
     zookeeper:
-      image: bitnami/zookeeper:latest #3.7.1
+      image: bitnami/zookeeper:3.7.1
       container_name: zookeeper
       ports:
         - 2181:2181
@@ -77,22 +77,13 @@ services:
         - net_bd
 
     kafka:
-      image: owuor/kafka:3.3.2
+      image: bitnami/kafka:3.4
       container_name: kafka
       ports:
         - 9092:9092
-      environment:
-        - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-        - ALLOW_PLAINTEXT_LISTENER=yes
-        - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
-        - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
-        - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
-        - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
-        - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
-        - KAFKA_BROKER_ID=1
-        - IOT_TOPIC_NAME=iot-temp
-      #env_file:
-      #  - ./configs/kafka.env
+        - 9093:9093
+      env_file:
+        - ./configs/kafka.env
       depends_on:
         - zookeeper
       networks:
