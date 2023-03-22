@@ -1,4 +1,4 @@
-In order to upload this file to HDF5, we do the following:
+In order to upload a CSV file to HDF5, we do the following:
 
 1. Create a folder "data" from the namenode URL - http://localhost:9870
 
@@ -15,3 +15,8 @@ In order to upload this file to HDF5, we do the following:
 3. To preview the CSV file: hdfs dfs -cat /data/bank.csv | head
 
 4. Perform interactive analytics using a Zeppelin notebook
+
+
+-------------------------------------------------------------------------
+
+Write IoT data to Hadoop HDF5 using Node-RED and Kafka
