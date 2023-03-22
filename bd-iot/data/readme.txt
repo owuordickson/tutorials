@@ -1,0 +1,17 @@
+In order to upload this file to HDF5, we do the following:
+
+1. Create a folder "data" from the namenode URL - http://localhost:9870
+
+2. To save CSV file, go into the namenode terminal and do the following:
+
+    a. Create a 'csv' file using "touch bank.csv"
+
+    b. Copy and paste data into the csv file using "nano bank.csv"
+
+    c. Copy the csv file to the HDF5 via "hadoop fs -put bank.csv /data"
+
+    d. Delete the redundant csv file via "rm bank.csv"
+
+3. To preview the CSV file: hdfs dfs -cat /data/bank.csv | head
+
+4. Perform interactive analytics using a Zeppelin notebook

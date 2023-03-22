@@ -5,7 +5,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       ca-certificates \
       software-properties-common \
       ssh \
-      #curl \
+      curl \
+      nano \
       tar \
       rsync \
       netcat \
