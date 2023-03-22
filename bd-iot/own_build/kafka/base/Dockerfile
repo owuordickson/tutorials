@@ -1,4 +1,4 @@
-FROM bitnami/kafka:3.3.2
+FROM bitnami/kafka:3.4
 
 ENV IOT_TOPIC_NAME=iot-topic
 EXPOSE 9092
