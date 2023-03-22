@@ -67,51 +67,63 @@ services:
         - net_bd
 
     zookeeper:
-      image: 'bitnami/zookeeper:latest'
+      image: bitnami/zookeeper:latest #3.7.1
       container_name: zookeeper
       ports:
-        - '2181:2181'
+        - 2181:2181
       environment:
         - ALLOW_ANONYMOUS_LOGIN=yes
       networks:
         - net_bd
 
     kafka:
-      image: 'bitnami/kafka:latest'
+      image: owuor/kafka:3.3.2
       container_name: kafka
       ports:
-        - '9092:9092'
-      environment:
-        - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-        - ALLOW_PLAINTEXT_LISTENER=yes
-        - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
-        - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
-        - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
-        - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
-        - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
-        # - KAFKA_BROKER_ID=1
+        - 9092:9092
+      env_file:
+        - ./configs/kafka.env
       depends_on:
         - zookeeper
       networks:
         - net_bd
 
+    #kafka:
+    #  image: bitnami/kafka:latest
+    #  container_name: kafka
+    #  ports:
+    #    - 9092:9092
+    #  environment:
+    #    - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+    #    - ALLOW_PLAINTEXT_LISTENER=yes
+    #    - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+    #    - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
+    #    - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
+    #    - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
+    #    - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+        # - KAFKA_BROKER_ID=1
+    #  depends_on:
+    #    - zookeeper
+    #  networks:
+    #    - net_bd
+
     # create kafka IoT topic
-    kafka-init:
-      image: 'bitnami/kafka:latest'
-      container_name: kafka-init
-      command: [ "/bin/bash", "-c", "chmod +x /kafka_topic.sh && sh /kafka_topic.sh"]
-      environment:
-        - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-        - IOT_TOPIC_NAME=iot-temp
-      depends_on:
-        - kafka
-      volumes:
-        - type: bind
-          source: ./configs/kafka_topic.sh
-          target: /kafka_topic.sh
-      init: true
-      networks:
-        - net_bd
+    #kafka-init:
+    #  image: bitnami/kafka:latest
+    #  container_name: kafka-init
+    #  command: [ "/bin/bash", "-c", "chmod +x /kafka_topic.sh && sh /kafka_topic.sh"]
+    #  environment:
+    #    - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+    #    - IOT_TOPIC_NAME=iot-temp
+    #  depends_on:
+    #    - kafka
+    #  volumes:
+    #    - type: bind
+    #      source: ./configs/kafka_topic.sh
+    #      target: /kafka_topic.sh
+    #  init: true
+    #  networks:
+    #    - net_bd
 
 volumes:
     nodered_data: {}
