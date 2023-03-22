@@ -45,11 +45,10 @@ services:
         - net_bd
 
     zeppelin:
-      image: apache/zeppelin:0.8.0
+      image: apache/zeppelin:0.9.0
       container_name: zeppelin
       volumes:
-        - ./configs/zeppelin/notebook:/opt/zeppelin/notebook
-        - ./configs/zeppelin/conf:/opt/zeppelin/conf
+        - zeppelin_notebook:/opt/zeppelin/notebook
         - zeppelin_logs:/opt/zeppelin/logs
       ports:
         - "8082:8080"
@@ -92,6 +91,7 @@ services:
 volumes:
     nodered_data: {}
     zeppelin_logs: {}
+    zeppelin_notebook: {}
     hadoop_datanode: {}
     hadoop_namenode: {}
 
