@@ -45,25 +45,28 @@ services:
         - net_bd
 
     zeppelin:
-      image: apache/zeppelin:0.9.0
+      #image: apache/zeppelin:0.9.0
+      image: owuor/zeppelin:latest
       container_name: zeppelin
       volumes:
         - zeppelin_notebook:/opt/zeppelin/notebook
         - zeppelin_logs:/opt/zeppelin/logs
       ports:
         - "8082:8080"
+        - "8081:8081"
       environment:
         - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+      #  - FLINK_HOME=/opt/flink-1.12.5
       networks:
         - net_bd
 
-    streamsets:
-      image: streamsets/datacollector:3.13.0-latest
-      container_name: streamsets
-      ports:
-        - "18630:18630"
-      networks:
-        - net_bd
+    #streamsets:
+    #  image: streamsets/datacollector:3.13.0-latest
+    #  container_name: streamsets
+    #  ports:
+    #    - "18630:18630"
+    #  networks:
+    #    - net_bd
 
     zookeeper:
       image: bitnami/zookeeper:3.7.1

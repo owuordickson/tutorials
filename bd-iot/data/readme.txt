@@ -24,3 +24,18 @@ Write IoT data to Hadoop HDF5 using Node-RED and Kafka
 1. Create Kafka topic 'iot-temp' from the terminal:
 
     /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic iot-temp --bootstrap-server kafka:9092
+
+2. Using node-red:
+
+    a. Import the following libraries from Palette ''
+
+    b. Import and deploy the flow 'mqtt-kafka.json'
+
+3. Using Zeppelin:
+
+    a. Modify the Flink interpreter
+
+        add FLINK_HOME
+        add dependency
+
+    b. Copy note and run it
