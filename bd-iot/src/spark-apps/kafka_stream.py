@@ -14,4 +14,5 @@ df = spark \
   .option("kafka.bootstrap.servers", "localhost:9092,localhost:9092") \
   .option("subscribe", "iot-temp") \
   .load()
-df.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)")
+
+df.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)").show()
