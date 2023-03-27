@@ -36,12 +36,11 @@ Write IoT data to Hadoop HDF5 using Node-RED and Kafka
 
 3. Using Zeppelin:
 
-    a. Modify the Flink interpreter
+    a. Modify the Apark interpreter
 
-        add FLINK_HOME
-        add dependency
+        add dependency: org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.8
 
-    b. Copy note and run it
+    b. Copy notebook and run it
 
 
 spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.2 kafka_stream.py spark://e69731fc043d:7077

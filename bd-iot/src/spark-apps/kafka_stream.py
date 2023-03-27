@@ -16,7 +16,8 @@ df = spark \
   .option("subscribe", "iot-temp") \
   .load()
 
-df1 = df.selectExpr("CAST(value AS STRING)", "CAST(timestamp AS TIMESTAMP)")#.as[(String, Timestamp)]
+# df1 = df.selectExpr("CAST(value AS STRING)", "CAST(timestamp AS TIMESTAMP)")#.as[(String, Timestamp)]
+df1 = df.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)")
 
 df1.writeStream \
   .outputMode("append") \
