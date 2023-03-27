@@ -25,9 +25,12 @@ Write IoT data to Hadoop HDF5 using Node-RED and Kafka
 
     /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic iot-temp --bootstrap-server kafka:9092
 
+    * Check if messages are arriving?
+    /opt/bitnami/kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --from-beginning --topic iot-temp --partition 0
+
 2. Using node-red:
 
-    a. Import the following libraries from Palette ''
+    a. Import the following libraries from Palette 'node-red-contrib-kafka-node-latest'
 
     b. Import and deploy the flow 'mqtt-kafka.json'
 
@@ -39,3 +42,8 @@ Write IoT data to Hadoop HDF5 using Node-RED and Kafka
         add dependency
 
     b. Copy note and run it
+
+
+spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.2 kafka_stream.py spark://e69731fc043d:7077
+
+spark-shell --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.2 kafka_stream.py spark://e69731fc043d:7077

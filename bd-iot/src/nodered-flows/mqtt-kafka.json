@@ -1,15 +1,15 @@
 [
     {
-        "id": "f6f2187d.f17ca8",
+        "id": "1f052dbab45d5c85",
         "type": "tab",
         "label": "MQTT with Kafka",
         "disabled": false,
         "info": ""
     },
     {
-        "id": "cd98af2ba6d25225",
+        "id": "77ca1f6be788039c",
         "type": "aedes broker",
-        "z": "f6f2187d.f17ca8",
+        "z": "1f052dbab45d5c85",
         "name": "",
         "mqtt_port": 1883,
         "mqtt_ws_bind": "port",
@@ -30,9 +30,9 @@
         ]
     },
     {
-        "id": "ae62fa4b43acaff1",
+        "id": "4893c8f6199d55aa",
         "type": "mqtt out",
-        "z": "f6f2187d.f17ca8",
+        "z": "1f052dbab45d5c85",
         "name": "publisher",
         "topic": "iot/temp",
         "qos": "",
@@ -43,14 +43,14 @@
         "correl": "",
         "expiry": "",
         "broker": "b8de56e1ebf9fdbd",
-        "x": 420,
+        "x": 800,
         "y": 160,
         "wires": []
     },
     {
-        "id": "b1c8f21bfde26bc9",
+        "id": "21afe9090e0945ca",
         "type": "mqtt in",
-        "z": "f6f2187d.f17ca8",
+        "z": "1f052dbab45d5c85",
         "name": "subscriber",
         "topic": "iot/temp",
         "qos": "0",
@@ -64,14 +64,14 @@
         "y": 380,
         "wires": [
             [
-                "c65dbe3890cbc0f7"
+                "1235115a326ce259"
             ]
         ]
     },
     {
-        "id": "e45c48215018374f",
+        "id": "113ba72151243c73",
         "type": "inject",
-        "z": "f6f2187d.f17ca8",
+        "z": "1f052dbab45d5c85",
         "name": "",
         "props": [
             {
@@ -82,7 +82,7 @@
                 "vt": "str"
             }
         ],
-        "repeat": "",
+        "repeat": "5",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
@@ -93,15 +93,14 @@
         "y": 160,
         "wires": [
             [
-                "ae62fa4b43acaff1",
-                "806731a0861d8709"
+                "4e86223e3a21aab9"
             ]
         ]
     },
     {
-        "id": "83219b7ce583e5c3",
+        "id": "48747945b14fde8d",
         "type": "debug",
-        "z": "f6f2187d.f17ca8",
+        "z": "1f052dbab45d5c85",
         "name": "MQTT Subscriber OUT",
         "active": true,
         "tosidebar": true,
@@ -111,68 +110,66 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 700,
-        "y": 380,
+        "x": 760,
+        "y": 480,
         "wires": []
     },
     {
-        "id": "806731a0861d8709",
-        "type": "Kafka Producer",
-        "z": "f6f2187d.f17ca8",
-        "name": "",
-        "broker": "4cdcbff9d8aa97dd",
+        "id": "e0554fe317e13fc9",
+        "type": "kafka",
+        "z": "1f052dbab45d5c85",
+        "brokerUrl": "kafka:9092",
         "topic": "iot-temp",
-        "topicSlash2dot": false,
-        "requireAcks": 1,
-        "ackTimeoutMs": 100,
-        "partitionerType": 0,
-        "key": "",
-        "partition": 0,
-        "attributes": 0,
-        "connectionType": "Producer",
-        "convertFromJson": false,
-        "x": 420,
-        "y": 240,
+        "partition": "0",
+        "debug": "",
+        "x": 790,
+        "y": 220,
         "wires": []
     },
     {
-        "id": "daccc642dc242465",
-        "type": "Kafka Consumer",
-        "z": "f6f2187d.f17ca8",
-        "name": "",
-        "broker": "4cdcbff9d8aa97dd",
-        "regex": false,
-        "topics": [
-            {
-                "topic": "iot-temp",
-                "offset": 0,
-                "partition": 0
-            }
-        ],
-        "groupId": "kafka-node-group",
-        "autoCommit": "true",
-        "autoCommitIntervalMs": 5000,
-        "fetchMaxWaitMs": 100,
-        "fetchMinBytes": 1,
-        "fetchMaxBytes": 1048576,
-        "fromOffset": 0,
-        "encoding": "utf8",
-        "keyEncoding": "utf8",
-        "connectionType": "Consumer",
-        "convertToJson": false,
-        "x": 340,
-        "y": 500,
+        "id": "c6646bbef9267ec2",
+        "type": "function",
+        "z": "1f052dbab45d5c85",
+        "name": "function: toJSON",
+        "func": "const data = {\n    \"key\": \"iot-data\",\n    \"value\": msg.payload\n};\nmsg.payload = JSON.stringify(data);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 300,
         "wires": [
             [
-                "d32312def7e73385"
+                "e0554fe317e13fc9",
+                "78503188264c251c"
             ]
         ]
     },
     {
-        "id": "d32312def7e73385",
+        "id": "1235115a326ce259",
+        "type": "function",
+        "z": "1f052dbab45d5c85",
+        "name": "function: output",
+        "func": "msg.payload = \"MQTT subscriber received: \" + msg.payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 460,
+        "wires": [
+            [
+                "48747945b14fde8d"
+            ]
+        ]
+    },
+    {
+        "id": "78503188264c251c",
         "type": "debug",
-        "z": "f6f2187d.f17ca8",
-        "name": "Kafka Consumer OUT",
+        "z": "1f052dbab45d5c85",
+        "name": "Kafka Message",
         "active": true,
         "tosidebar": true,
         "console": false,
@@ -181,26 +178,27 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 680,
-        "y": 500,
+        "x": 740,
+        "y": 420,
         "wires": []
     },
     {
-        "id": "c65dbe3890cbc0f7",
+        "id": "4e86223e3a21aab9",
         "type": "function",
-        "z": "f6f2187d.f17ca8",
-        "name": "function 1",
-        "func": "msg.payload = \"MQTT subscriber received: \" + msg.payload;\nreturn msg;",
+        "z": "1f052dbab45d5c85",
+        "name": "function: Random",
+        "func": "\nmsg.payload = function getRandomInt(min = 1, max = 1000) {\n\n\n    min = Math.ceil(min);\n\n\n    max = Math.floor(max);\n\n\n    return Math.floor(Math.random() * (max - min)) + min;\n\n\n}();\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 400,
-        "y": 380,
+        "x": 290,
+        "y": 160,
         "wires": [
             [
-                "83219b7ce583e5c3"
+                "c6646bbef9267ec2",
+                "4893c8f6199d55aa"
             ]
         ]
     },
@@ -233,27 +231,5 @@
         "willMsg": {},
         "userProps": "",
         "sessionExpiry": ""
-    },
-    {
-        "id": "4cdcbff9d8aa97dd",
-        "type": "Kafka Broker",
-        "name": "Kafka Broker",
-        "hosts": [
-            {
-                "host": "kafka",
-                "port": 9092
-            }
-        ],
-        "hostsEnvVar": "",
-        "connectTimeout": "10000",
-        "requestTimeout": "30000",
-        "autoConnect": "true",
-        "idleConnection": "5",
-        "reconnectOnIdle": "true",
-        "maxAsyncRequests": "10",
-        "checkInterval": "10",
-        "selfSign": true,
-        "usetls": false,
-        "useCredentials": false
     }
 ]
