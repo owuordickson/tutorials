@@ -14,7 +14,7 @@ You will be required to install **Docker**
 2. Use a command line program with the local package:
 
 ``` shell
-$docker-compose up
+$docker-compose up -d
 ```
 
 ## Usage

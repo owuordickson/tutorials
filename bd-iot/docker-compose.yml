@@ -45,18 +45,49 @@ services:
         - net_bd
 
     zeppelin:
-      #image: apache/zeppelin:0.9.0
-      image: owuor/zeppelin:latest
+      image: apache/zeppelin:0.9.0
+      #image: owuor/zeppelin:latest
       container_name: zeppelin
       volumes:
         - zeppelin_notebook:/opt/zeppelin/notebook
         - zeppelin_logs:/opt/zeppelin/logs
       ports:
         - "8082:8080"
-        - "8081:8081"
       environment:
         - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
-      #  - FLINK_HOME=/opt/flink-1.12.5
+        - SPARK_MASTER=spark://spark-master:7077
+        - MASTER=spark://spark-master:7077
+        - SPARK_MASTER_URL=spark://spark-master:7077
+      networks:
+        - net_bd
+
+
+    spark:
+      image: docker.io/bitnami/spark:3.3
+      container_name: spark-master
+      environment:
+        - SPARK_MODE=master
+        - SPARK_RPC_AUTHENTICATION_ENABLED=no
+        - SPARK_RPC_ENCRYPTION_ENABLED=no
+        - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+        - SPARK_SSL_ENABLED=no
+        - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+      ports:
+        - '8083:8080'
+      networks:
+        - net_bd
+    spark-worker:
+      image: docker.io/bitnami/spark:3.3
+      container_name: spark-worker
+      environment:
+        - SPARK_MODE=worker
+        - SPARK_MASTER_URL=spark://spark:7077
+        - SPARK_WORKER_MEMORY=1G
+        - SPARK_WORKER_CORES=1
+        - SPARK_RPC_AUTHENTICATION_ENABLED=no
+        - SPARK_RPC_ENCRYPTION_ENABLED=no
+        - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+        - SPARK_SSL_ENABLED=no
       networks:
         - net_bd
 
