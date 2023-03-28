@@ -67,7 +67,9 @@ services:
       container_name: spark-master
       ports:
         - '8083:8080'
+      user: root
       volumes:
+        - ./configs/spark/jars_dir:/opt/bitnami/spark/ivy:z
         - ./src/spark-apps:/home/
       environment:
         - SPARK_MODE=master

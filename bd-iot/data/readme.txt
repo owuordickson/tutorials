@@ -34,15 +34,20 @@ Write IoT data to Hadoop HDF5 using Node-RED and Kafka
 
     b. Import and deploy the flow 'mqtt-kafka.json'
 
-3. Using Zeppelin:
+3. Using Spark-master:
 
-    a. Modify the Apark interpreter
+    In order to build an ETL program that will store our IoT stream to HDFS, navigate to Terminal/CMD and type the following commands:
 
-        add dependency: org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.8
+    a. cd /home
 
-    b. Copy notebook and run it
+    b. spark-shell --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.8 -i kafka_stream.scala
+
+4. Using Zeppelin:
+
+    a. Copy notebook and run it
 
 
-spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.2 kafka_stream.py spark://e69731fc043d:7077
 
-spark-shell --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.2 kafka_stream.py spark://e69731fc043d:7077
+
+
+
