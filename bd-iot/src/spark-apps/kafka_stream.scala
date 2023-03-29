@@ -13,7 +13,7 @@ val df = spark.readStream.format("kafka").option("kafka.bootstrap.servers", "kaf
 
 val string_df = df.selectExpr("CAST(value AS STRING)")
 
-val schema = new StructType().add("source",StringType).add("value",IntegerType)
+val schema = new StructType().add("source",StringType).add("timestamp",IntegerType).add("value",IntegerType).add("status",StringType)
 
 val iot_df = string_df.select(from_json(col("value"), schema).as("data")).select("data.*")
 

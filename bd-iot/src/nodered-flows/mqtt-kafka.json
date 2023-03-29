@@ -43,7 +43,7 @@
         "correl": "",
         "expiry": "",
         "broker": "b8de56e1ebf9fdbd",
-        "x": 800,
+        "x": 820,
         "y": 160,
         "wires": []
     },
@@ -61,7 +61,7 @@
         "rh": 0,
         "inputs": 0,
         "x": 80,
-        "y": 380,
+        "y": 480,
         "wires": [
             [
                 "1235115a326ce259"
@@ -82,13 +82,13 @@
                 "vt": "str"
             }
         ],
-        "repeat": "5",
+        "repeat": "30",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "25",
-        "payloadType": "num",
+        "payload": "",
+        "payloadType": "date",
         "x": 110,
         "y": 160,
         "wires": [
@@ -110,7 +110,7 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 760,
+        "x": 780,
         "y": 480,
         "wires": []
     },
@@ -122,8 +122,8 @@
         "topic": "iot-temp",
         "partition": "0",
         "debug": "",
-        "x": 790,
-        "y": 220,
+        "x": 810,
+        "y": 240,
         "wires": []
     },
     {
@@ -131,13 +131,13 @@
         "type": "function",
         "z": "1f052dbab45d5c85",
         "name": "function: toJSON",
-        "func": "const data = {\n    \"key\": \"iot-data\",\n    \"value\": msg.payload\n};\nmsg.payload = JSON.stringify(data);\nreturn msg;",
+        "func": "const data = {\n    \"source\": \"node-red\",\n    \"timestamp\": msg.payload[0],\n    \"value\": msg.payload[1],\n    \"status\": msg.payload[2]\n};\nmsg.payload = JSON.stringify(data);\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 530,
+        "x": 570,
         "y": 300,
         "wires": [
             [
@@ -157,8 +157,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 320,
-        "y": 460,
+        "x": 460,
+        "y": 480,
         "wires": [
             [
                 "48747945b14fde8d"
@@ -178,8 +178,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 740,
-        "y": 420,
+        "x": 820,
+        "y": 400,
         "wires": []
     },
     {
@@ -187,13 +187,13 @@
         "type": "function",
         "z": "1f052dbab45d5c85",
         "name": "function: Random",
-        "func": "\nmsg.payload = function getRandomInt(min = 1, max = 1000) {\n\n\n    min = Math.ceil(min);\n\n\n    max = Math.floor(max);\n\n\n    return Math.floor(Math.random() * (max - min)) + min;\n\n\n}();\n\nreturn msg;",
+        "func": "var tstamp = msg.payload;\n\nvar val = function getRandomInt(min = 1, max = 1000) {\n\n    min = Math.ceil(min);\n    max = Math.floor(max);\n\n    return Math.floor(Math.random() * (max - min)) + min;\n\n}();\n\nvar status = 'low';\n\nif (val <= 200)\nstatus = 'low';\nelse if (val > 200 && val <= 750)\nstatus = 'normal'\nelse\nstatus = 'high'\n\nmsg.payload = [tstamp, val, status]\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 290,
+        "x": 330,
         "y": 160,
         "wires": [
             [
