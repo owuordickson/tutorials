@@ -40,7 +40,7 @@ Write IoT data to Hadoop HDF5 using Node-RED and Kafka
 
     a. cd /home
 
-    b. spark-shell --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.8 -i kafka_stream.scala
+    b. spark-shell --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.8 -i kafka_stream.scala spark://spark-master:7077
 
 4. Using Zeppelin:
 
