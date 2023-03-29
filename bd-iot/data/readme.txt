@@ -47,7 +47,6 @@ Write IoT data to Hadoop HDF5 using Node-RED and Kafka
     a. Copy notebook and run it
 
 
+5. Exercise
 
-
-
-
+    a. Analyze the IoT data and describe your discoveries, conclusions etc.
