@@ -12,8 +12,8 @@ services:
         - net_bd
 
     namenode:
-      image: owuor/hdfs-namenode
-      #image: owuordickson/hdfs-base:0.0.1
+      image: owuordickson/hdfs-namenode
+      #image: owuordickson/hdfs-namenode:0.0.1
       container_name: namenode
       #restart: always
       ports:
@@ -29,8 +29,8 @@ services:
         - net_bd
 
     datanode:
-      image: owuor/hdfs-datanode
-      #image: owuordickson/hdfs-base:0.0.1
+      image: owuordickson/hdfs-datanode
+      #image: owuordickson/hdfs-datanode:0.0.1
       container_name: datanode
       #restart: always
       ports:
