@@ -15,7 +15,7 @@ services:
       image: owuor/hdfs-datanode
       #image: owuordickson/hdfs-base:0.0.1
       container_name: namenode
-      restart: always
+      #restart: always
       ports:
         - 9870:9870
         - 9000:9000
@@ -32,7 +32,7 @@ services:
       image: owuor/hdfs-datanode
       #image: owuordickson/hdfs-base:0.0.1
       container_name: datanode
-      restart: always
+      #restart: always
       ports:
         - 9864:9864
       volumes:
@@ -48,7 +48,6 @@ services:
 
     zeppelin:
       image: apache/zeppelin:0.9.0
-      #image: owuor/zeppelin:latest
       container_name: zeppelin
       volumes:
         - zeppelin_notebook:/opt/zeppelin/notebook
