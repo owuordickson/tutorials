@@ -1,2 +1,3 @@
 # ignore data folder
 VMs/
+influxdb/
