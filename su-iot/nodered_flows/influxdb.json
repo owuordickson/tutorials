@@ -1,1 +1,177 @@
-[{"id":"f6f2187d.f17ca8","type":"tab","label":"influxdb","disabled":false,"info":""},{"id":"17fde85a.5fe9d8","type":"debug","z":"f6f2187d.f17ca8","name":"","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"false","statusVal":"","statusType":"auto","x":620,"y":160,"wires":[]},{"id":"bec05c93.75643","type":"inject","z":"f6f2187d.f17ca8","name":"","props":[{"p":"payload"},{"p":"topic","vt":"str"}],"repeat":"","crontab":"","once":false,"onceDelay":0.1,"topic":"","payload":"","payloadType":"date","x":140,"y":160,"wires":[["3f7385f2.a7a53a"]]},{"id":"a8ed1aba.cc4488","type":"Stackhero-InfluxDB-v2-query","z":"f6f2187d.f17ca8","server":"27107c42.5edd24","name":"","x":390,"y":260,"wires":[["17fde85a.5fe9d8"]]},{"id":"3f7385f2.a7a53a","type":"function","z":"f6f2187d.f17ca8","name":"","func":"msg.topic = 'from(bucket: \"iot_bucket\") |> range(start: -1h)';\nreturn msg;","outputs":1,"noerr":0,"initialize":"","finalize":"","libs":[],"x":150,"y":280,"wires":[["a8ed1aba.cc4488"]]},{"id":"27107c42.5edd24","type":"Stackhero-InfluxDB-v2-Server","name":"influxdb","host":"influxdb","port":"8086","tls":false}]
+[
+    {
+        "id": "f6f2187d.f17ca8",
+        "type": "tab",
+        "label": "influxdb",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "89fad798297138a6",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "name": "inject",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 140,
+        "wires": [
+            [
+                "2bb2f78f8b6733bc"
+            ]
+        ]
+    },
+    {
+        "id": "094d1260b5e04aac",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "output",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 850,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "2bb2f78f8b6733bc",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "setQuery",
+        "func": "msg.topic = 'from(bucket: \"owuor-bucket\") |> range(start: -1d)';\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 80,
+        "wires": [
+            [
+                "e5603253bb4f5d6a"
+            ]
+        ]
+    },
+    {
+        "id": "e5603253bb4f5d6a",
+        "type": "Stackhero-InfluxDB-v2-query",
+        "z": "f6f2187d.f17ca8",
+        "server": "9fe958257cf3776b",
+        "name": "",
+        "x": 590,
+        "y": 80,
+        "wires": [
+            [
+                "094d1260b5e04aac"
+            ]
+        ]
+    },
+    {
+        "id": "9eb3b79885bd072c",
+        "type": "Stackhero-InfluxDB-v2-write",
+        "z": "f6f2187d.f17ca8",
+        "server": "9fe958257cf3776b",
+        "name": "",
+        "x": 750,
+        "y": 500,
+        "wires": [
+            [
+                "094d1260b5e04aac"
+            ]
+        ]
+    },
+    {
+        "id": "1eb73db67c1e7147",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "name": "inject",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 90,
+        "y": 340,
+        "wires": [
+            [
+                "6bc39f8a88103560"
+            ]
+        ]
+    },
+    {
+        "id": "aaa1c57248a94e3e",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "setWrite",
+        "func": "var sensor_data = msg.payload;\n\nmsg.payload = {\n    // You bucket\n    // Optional (it can be defined in the node credentials settings)\n    bucket: 'iot_bucket',\n\n    // Precision of timestamp\n    // Optional\n    // Can be `ns` (nanoseconds),\n    //        `us` (microseconds),\n    //        `ms` (milliseconds),\n    //        `s` (seconds).\n    // The default is `ns`\n    // Note: if you set the `timestamp` field to `Date.now()`, you have to set the `precision` to `ms`\n    precision: 'ms',\n\n    // Data to send to InfluxDB\n    // Can be an array of objects or only one object\n    data: [\n        {\n            measurement: 'testSensor',\n\n            tags: {\n                deviceId: 'su23',\n                location: 'Nairobi'\n            },\n\n            fields: {\n                temperature: sensor_data[0],\n                humidity: sensor_data[1],\n                vibrations: sensor_data[3],\n                batteryVoltage: (sensor_data[3]/20)\n            },\n\n            timestamp: Date.now()\n        },\n\n        // More data can be send here, simply re add an object\n        // { ... },\n    ]\n};\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 440,
+        "wires": [
+            [
+                "9eb3b79885bd072c"
+            ]
+        ]
+    },
+    {
+        "id": "6bc39f8a88103560",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "randomGenerator",
+        "func": "\nfunction getRandomInt(min = 1, max = 1000) {\n\n    min = Math.ceil(min);\n    max = Math.floor(max);\n\n    return Math.floor(Math.random() * (max - min)) + min;\n\n};\n\nvar val_1 = getRandomInt();\nvar val_2 = getRandomInt();\nvar val_3 = getRandomInt();\nvar val_4 = getRandomInt();\n\nmsg.payload = [val_1, val_2, val_3, val_4];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 290,
+        "y": 440,
+        "wires": [
+            [
+                "aaa1c57248a94e3e"
+            ]
+        ]
+    },
+    {
+        "id": "9fe958257cf3776b",
+        "type": "Stackhero-InfluxDB-v2-Server",
+        "name": "influxdb-server",
+        "host": "influx-db",
+        "port": "8086",
+        "tls": false
+    }
+]
