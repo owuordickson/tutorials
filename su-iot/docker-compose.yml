@@ -1,7 +1,7 @@
 version: '3'
 services:
     influxdb:
-      image: influxdb:latest # 2.0
+      image: influxdb:latest # 2.7
       container_name: influx-db
       #command: bash -c "influx write -b owuor-bucket -f /home/birds_headers.csv -f /home/birds_data.csv"
       volumes:
@@ -16,7 +16,6 @@ services:
         DOCKER_INFLUXDB_INIT_PASSWORD: password
         DOCKER_INFLUXDB_INIT_ORG: sharemiale
         DOCKER_INFLUXDB_INIT_BUCKET: owuor-bucket
-        DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: my-super-secret-auth-token
       networks:
         - net_iot
       
