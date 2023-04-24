@@ -1,5 +1,14 @@
-version: '2'
+version: '3'
 services:
+    fritzing:
+      image: owuordickson/fritzing:0.9.3
+      container_name: fritzing
+      environment:
+        - DISPLAY=${DISPLAY}
+      volumes:
+        - /tmp/.X11-unix:/tmp/.X11-unix
+      network_mode: host
+
     influxdb:
       image: influxdb:latest # 2.7
       container_name: influx-db

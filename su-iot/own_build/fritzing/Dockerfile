@@ -1,26 +1,25 @@
-FROM openjdk:8u222-stretch
-
-RUN apt-get update && apt-get install -y \
-      software-properties-common \
-      nano \
-      tar \
-      libjpeg-dev \
-      libncurses5-dev \
-      libpng-dev \
-      libqt5serialport5-dev \
-      libqt5svg5-dev \
-      libssl-dev \
-      libudev-dev \
-      libz-dev \
-      python-dev \
-      qt5-default \
-      qttools5-dev-tools \
-      xvfb \
-    && rm -rf /var/lib/apt/lists/* 
-      
-ENV JAVA_HOME=/usr/local/openjdk-8
+FROM conanio/gcc8
 
 ENV FRITZING_VERSION 0.9.3b
+ENV BOOST_ROOT /usr/local
+
+USER root
+
+RUN apt-get update && apt-get install -y \
+      nano \
+      tar \
+      libssl1.0.0 \
+      libgl1 \
+      libssl-dev \
+      '^libxcb.*-dev' \
+      libx11-xcb-dev \
+      libglu1-mesa-dev \
+      libxrender-dev \
+      libxi-dev \
+      libxkbcommon-dev \
+      libxkbcommon-x11-dev \
+      qt5-default \
+      qttools5-dev-tools
 
 WORKDIR /opt
 COPY /fritzing-0.9.3b.linux.AMD64.tar.bz2 .
@@ -30,7 +29,13 @@ RUN set -x \
     && rm /opt/fritzing-$FRITZING_VERSION.linux.AMD64.tar.bz2* \
     && mv /opt/fritzing-$FRITZING_VERSION.linux.AMD64 /opt/fritzing
 
+RUN export QT_DEBUG_PLUGINS=1
+
 ENV FRITZING_HOME=/opt/fritzing
 ENV PATH $FRITZING_HOME/:$PATH
 
-CMD /opt/fritzing/Fritzing
+CMD ["/opt/fritzing/Fritzing"]
+
+#EXPOSE 5900
+#RUN echo "exec /opt/fritzing/Fritzing" > ~/.xinitrc && chmod +x ~/.xinitrc
+#CMD ["v11vnc", "-create", "-forever"]
