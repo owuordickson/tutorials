@@ -12,6 +12,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       netcat \
       gnupg \
       libsnappy-dev \
+      libjpeg-dev \
+      libncurses5-dev \
+      libpng-dev \
+      libqt5serialport5-dev \
+      libqt5svg5-dev \
+      libssl-dev \
+      libudev-dev \
+      libz-dev \
+      python-dev \
+      qt5-default \
+      qttools5-dev-tools \
+      xvfb \
     && rm -rf /var/lib/apt/lists/* 
       
 ENV JAVA_HOME=/usr/local/openjdk-8
@@ -29,4 +41,4 @@ RUN set -x \
 ENV FRITZING_HOME=/opt/fritzing
 ENV PATH $FRITZING_HOME/:$PATH
 
-CMD ["/opt/fritzing/Fritzing"]
+CMD /opt/fritzing/Fritzing
