@@ -1,17 +1,9 @@
 FROM openjdk:8u222-stretch
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      net-tools \
-      ca-certificates \
+RUN apt-get update && apt-get install -y \
       software-properties-common \
-      ssh \
-      curl \
       nano \
       tar \
-      rsync \
-      netcat \
-      gnupg \
-      libsnappy-dev \
       libjpeg-dev \
       libncurses5-dev \
       libpng-dev \
