@@ -4,4 +4,5 @@ influxdb/
 
 *.gz
 *.bz2
+*.del
 
