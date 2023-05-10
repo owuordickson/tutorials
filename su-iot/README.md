@@ -30,11 +30,12 @@ You will be required to download install the following software:
 
 ## Usage
 
-To run Fritzing: start the *fritzing* container.
+* The Fritzing application should start and be visible on your screen (immediately after the *docker-compose*).
+    - To start/stop the application: Open the **Docker Desktop** and start/stop the **fritzing** container
 
-Launch your *Browser* and go to:
-* Node-RED: <http://localhost:1880>
-* InfluxDB: <http://localhost:8086>
+* **Node-RED** and **InfluxDB** are accessible from your browser after starting their respective containers. Launch your *Browser* and go to:
+    - Node-RED: <http://localhost:1880>
+    - InfluxDB: <http://localhost:8086>
 
 
 ## Resources:
