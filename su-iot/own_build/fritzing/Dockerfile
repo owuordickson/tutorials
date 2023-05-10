@@ -1,5 +1,5 @@
 FROM ubuntu:rolling
-MAINTAINER owuordickson@gmail.com
+LABEL maintainer="owuordickson@gmail.com"
 
 # Update Ubuntu Linux package manager and Install required software
 RUN apt-get update && apt-get install -y nano \
