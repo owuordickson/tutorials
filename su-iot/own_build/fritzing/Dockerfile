@@ -31,8 +31,6 @@ ENV FRITZING_VERSION 0.9.3b
 WORKDIR /opt
 COPY /base .
 
-# RUN apt install /opt/libssl1.0.0_1.0.2n-1ubuntu5.12_amd64.deb
-
 RUN set -xe \
     && tar -xvf /opt/fritzing-$FRITZING_VERSION.linux.AMD64.tar.bz2 -C /opt/ \
     && rm /opt/fritzing-$FRITZING_VERSION.linux.AMD64.tar.bz2* \
@@ -43,4 +41,4 @@ ENV PATH $FRITZING_HOME/:$PATH
 
 USER developer
 
-#CMD ["/opt/fritzing/Fritzing"]
+CMD ["/opt/fritzing/Fritzing"]
