@@ -6,6 +6,8 @@ services:
       container_name: fritzing
       environment:
         - DISPLAY=host.docker.internal:0
+      networks:
+        - net_iot
 
     influxdb:
       image: influxdb:latest # 2.7
