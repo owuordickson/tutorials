@@ -14,7 +14,7 @@ Creating Fritzing Container
 
 4. Open your Terminal/CMD application and run the following commands:
     a. xhost + 127.0.0.1
-    b. navigate to 'su-iot' folder and run: docker-compose up -d
+    b. navigate to 'su-iot' folder and run: docker compose up -d
     OR
     c. docker run -ti --rm -e DISPLAY=host.docker.internal:0 --name fritzing owuordickson/fritzing:ubuntu
 
