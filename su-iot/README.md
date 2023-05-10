@@ -9,7 +9,6 @@ You will be required to download install the following software:
 * Docker Desktop via the link: <https://www.docker.com/products/docker-desktop/>
 
 * X-Server (X11/Xorg/XQuartz) application. Depending on your Operating System, install this via:
-
     - for MacOS install [XQuartz]: <https://www.xquartz.org/> OR brew install --cask xquartz
     - for Windows [Xming]: <http://www.straightrunning.com/XmingNotes/>
     - for Linux [Xorg]: sudo apt-get install xorg
