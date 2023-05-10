@@ -1,6 +1,12 @@
 version: '3'
 services:
 
+    fritzing:
+      image: owuordickson/fritzing:ubuntu
+      container_name: fritzing
+      environment:
+        - DISPLAY=host.docker.internal:0
+
     influxdb:
       image: influxdb:latest # 2.7
       container_name: influx-db
