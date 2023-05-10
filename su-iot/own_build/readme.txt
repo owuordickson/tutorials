@@ -1,4 +1,5 @@
-In order to run Fritzing container:
+Creating Fritzing Container
+---------------------------
 
 1. Make sure your system has X-Server (X11/Xorg) application installed. If not, install it.
     * for MacOS install [XQuartz]: https://www.xquartz.org/ OR brew install --cask xquartz
@@ -19,3 +20,8 @@ In order to run Fritzing container:
 
     * The Fritzing application should start and be visible on your screen.
     * To stop the application: Open the Docker Desktop and stop the fritzing container
+
+
+Resources:
+----------
+* https://gist.github.com/palmerj/315053c0d940f4c63dee7655ce037ade
