@@ -19,7 +19,7 @@ You will be required to download install the following software:
 
 ## Installation
 
-1. Download package
+1. Download package from GitHub.
 
 2. Start your Docker Desktop and (X11/Xorg/XQuartz) applications.
 
