@@ -21,10 +21,11 @@ You will be required to install **Docker Desktop**
 The *docker-compose* will create containers for the following software: Node-RED, Hadoop (namenode & datanode), Zeppelin, Spark, Kafka, Zookeeper.
 
 All these software are accessible from your browser after starting their respective containers. Launch your *Browser* and go to:
-    - Node-RED: <http://localhost:1881>
-    - Namenode: <http://localhost:9870>
-    - Zeppelin: <http://localhost:8082>
-    - Spark: <http://localhost:8083>
+
+* Node-RED: <http://localhost:1881>
+* Namenode: <http://localhost:9870>
+* Zeppelin: <http://localhost:8082>
+* Spark: <http://localhost:8083>
 
 
 
