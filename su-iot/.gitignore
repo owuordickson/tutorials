@@ -1,7 +1,5 @@
 # ignore data folder
-VMs/
 influxdb/
-*.del/
 
 *.gz
 *.bz2
