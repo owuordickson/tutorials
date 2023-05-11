@@ -1,2 +1,5 @@
 # ignore this
 .DS_STORE
+
+dist-sys/
+su-java/
