@@ -10,7 +10,7 @@ You will be required to download install the following software:
 
 2. X-Server **(X11/Xorg/XQuartz)** application. Depending on your Operating System, install this via:
     - for MacOS install [XQuartz]: <https://www.xquartz.org/> OR ```brew install --cask xquartz```
-    - for Windows [Xming]: <http://www.straightrunning.com/XmingNotes/>
+    - for Windows [Xming]: <https://cc.jlab.org/windows/X11onWindows>
     - for Linux [Xorg]: ```sudo apt-get install xorg```
 
 3. Launch (X11/Xorg/XQuartz) application.
