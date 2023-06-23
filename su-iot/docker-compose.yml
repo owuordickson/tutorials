@@ -35,17 +35,18 @@ services:
         - nodered_data:/data
       ports:
         - "1880:1880"
-      depends_on:
+      links:
         - influxdb
+        - thingsboard
       networks:
         - net_iot
 
-    things-board:
+    thingsboard:
       image: thingsboard/tb-postgres
       container_name: things-board
       volumes:
-        - ~/.mytb-data:/data
-        - ~/.mytb-logs:/var/log/thingsboard
+        - thingboard_data:/data
+        - thingboard_logs:/var/log/thingsboard
       ports:
         - "8080:9090"
         - "1883:1883"
@@ -60,6 +61,8 @@ volumes:
     nodered_data: {}
     influxdb_data: {}
     influxdb_conf: {}
+    thingboard_data: {}
+    thingboard_logs: {}
 
 networks:
   net_iot:
