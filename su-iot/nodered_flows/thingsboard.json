@@ -1,0 +1,82 @@
+[
+    {
+        "id": "e6a0c346dd126beb",
+        "type": "tab",
+        "label": "ThingsBoard",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "455d7296af6584d9",
+        "type": "inject",
+        "z": "e6a0c346dd126beb",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"temperature\": 27}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 100,
+        "wires": [
+            [
+                "3ebd2122432f3970"
+            ]
+        ]
+    },
+    {
+        "id": "3ebd2122432f3970",
+        "type": "http request",
+        "z": "e6a0c346dd126beb",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://things-board:9090/api/v1/46dOr5iCicdxEKYSR96T/telemetry",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "Content-Type",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            }
+        ],
+        "x": 430,
+        "y": 100,
+        "wires": [
+            [
+                "5ffc19d3f143e508"
+            ]
+        ]
+    },
+    {
+        "id": "5ffc19d3f143e508",
+        "type": "debug",
+        "z": "e6a0c346dd126beb",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 700,
+        "y": 160,
+        "wires": []
+    }
+]
