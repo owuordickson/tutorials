@@ -39,6 +39,23 @@ services:
         - influxdb
       networks:
         - net_iot
+
+    things-board:
+      image: thingsboard/tb-postgres
+      container_name: things-board
+      volumes:
+        - ~/.mytb-data:/data
+        - ~/.mytb-logs:/var/log/thingsboard
+      ports:
+        - "8080:9090"
+        - "1883:1883"
+        - "7070:7070"
+        - "5683-5688:5683-5688/udp"
+      environment:
+        TB_QUEUE_TYPE: in-memory
+      networks:
+        - net_iot
+
 volumes:
     nodered_data: {}
     influxdb_data: {}
