@@ -25,7 +25,7 @@ You will be required to download install the following software:
 
 3. Use a command line program **(Terminal/CMD)** with the local package:
     - Type and execute the command: ```xhost + 127.0.0.1```. *(Output: 127.0.0.1 being added to access control list)*.
-    - Navigate to **su-iot** folder and execute the command: ```docker compose up -d```
+    - Navigate to **IoT** folder and execute the command: ```docker compose up -d```
 
 
 ## Usage
