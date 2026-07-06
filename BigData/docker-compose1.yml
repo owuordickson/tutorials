@@ -1,0 +1,22 @@
+version: '3'
+services:
+  
+    node-red:
+      image: nodered/node-red
+      container_name: nodered
+      volumes:
+        - nodered_data:/data
+      ports:
+        - "1881:1880"
+      networks:
+        - net_bd
+
+   
+volumes:
+    nodered_data: {}
+
+
+networks:
+  net_bd:
+    name: net_bd
+    driver: bridge
