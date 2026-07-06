@@ -9,12 +9,12 @@ You will be required to install **Docker Desktop**
 
 ## Installation
 
-1. Download packagefrom GitHub.
+1. Download package from GitHub.
 
 2. Start your Docker Desktop.
 
 3. Use a command line program **(Terminal/CMD)** with the local package:
-    - Navigate to **bd-iot** folder and execute the command: ```docker compose up -d```
+    - Navigate to **BigData** folder and execute the command: ```docker compose up -d```
 
 ## Usage
 
