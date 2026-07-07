@@ -118,7 +118,7 @@ services:
       - net_bd
 
   zookeeper:
-    image: apache/zookeeper:3.9.3
+    image: zookeeper:3.9.3
     container_name: zookeeper
     hostname: zookeeper
     ports:
