@@ -13,7 +13,7 @@ services:
     env_file:
       - ./configs/hadoop.env
     volumes:
-      - hadoop_namenode:/opt/hadoop/dfs/name
+      - hadoop_namenode:/opt/hadoop/dfs/dfs/name
 
   datanode:
     image: apache/hadoop:3.5.0
@@ -24,9 +24,9 @@ services:
     env_file:
       - ./configs/hadoop.env
     environment:
-      - ENSURE_NAMENODE_DIR=/opt/hadoop/dfs/name
+      - ENSURE_NAMENODE_DIR=/opt/hadoop/dfs/dfs/name
     volumes:
-      - hadoop_datanode:/opt/hadoop/dfs/data
+      - hadoop_datanode:/opt/hadoop/dfs/dfs/data
     depends_on:
       - namenode
 
@@ -42,27 +42,32 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT'
       KAFKA_LISTENERS: 'INTERNAL://:29092,EXTERNAL://:9092,CONTROLLER://:9093'
       KAFKA_ADVERTISED_LISTENERS: 'INTERNAL://kafka:29092,EXTERNAL://localhost:9092'
-      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@localhost:9093'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:9093'  # Fixed localhost to kafka for network clarity
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'INTERNAL'
 
   # --- SPARK 4.0.0 ENGINE ---
   spark-master:
-    image: apache/spark:4.0.0-python3
+    image: apache/spark:4.1.2-python3
     container_name: spark-master
     hostname: spark-master
     ports:
       - "8080:8080"
       - "7077:7077"
     command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.master.Master"]
+    volumes:
+      - ./code/spark-apps:/opt/spark/work-dir
 
   spark-worker:
-    image: apache/spark:4.0.0-python3
+    image: apache/spark:4.1.2-python3
     container_name: spark-worker
     depends_on:
       - spark-master
     ports:
       - "8081:8081"
     command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077"]
+    volumes:
+      - ./code/spark-apps:/opt/spark/work-dir
 
   # --- APACHE ZEPPELIN NOTEBOOK ---
   zeppelin:
@@ -85,7 +90,7 @@ services:
     image: nodered/node-red:latest
     container_name: nodered
     ports:
-      - "1880:1880"  # Node-RED Visual Workflow UI
+      - "1881:1880"  # Node-RED Visual Workflow UI
     volumes:
       - nodered_data:/data
     depends_on:
