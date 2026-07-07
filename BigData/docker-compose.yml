@@ -11,7 +11,7 @@ services:
       - "9870:9870"
       - "9000:9000"
     env_file:
-      - ./hadoop.env
+      - ./configs/hadoop.env
     volumes:
       - hadoop_namenode:/opt/hadoop/dfs/name
 
@@ -22,7 +22,7 @@ services:
     ports:
       - "9864:9864"
     env_file:
-      - ./hadoop.env
+      - ./configs/hadoop.env
     environment:
       - ENSURE_NAMENODE_DIR=/opt/hadoop/dfs/name
     volumes:
