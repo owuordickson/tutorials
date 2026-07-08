@@ -33,14 +33,14 @@ Write IoT data to Hadoop HDF5 using Node-RED and Kafka
   --replication-factor 1
 
     * Check active topics:
-     /opt/kafka/bin/kafka-topics.sh --create --topic iot-temp --bootstrap-server
+     /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
 
     * Check if messages are arriving?
     /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --from-beginning --topic iot-temp --partition 1
 
 2. Using node-red:
 
-    a. Import the following libraries from Palette 'node-red-contrib-kafka-node-latest'
+    a. Import the following libraries from Palette 'node-red-contrib-kafka-node-latest' and, 'node-red-contrib-aedes'
 
     b. Import and deploy the flow 'mqtt-kafka.json'
 
