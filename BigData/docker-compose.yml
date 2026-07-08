@@ -1,34 +1,40 @@
 version: '3.8'
 
 services:
-  # --- HADOOP 3.5.0 CLUSTER ---
+  # --- CUSTOM ALPINE HADOOP 3.5.0 NAMENODE ---
   namenode:
-    image: apache/hadoop:3.5.0
+    image: owuordickson/hdfs-base:latest
     container_name: namenode
     hostname: namenode
-    command: ["hdfs", "namenode"]
-    ports:
-      - "9870:9870"
-      - "9000:9000"
-    env_file:
-      - ./configs/hadoop.env
-    volumes:
-      - hadoop_namenode:/opt/hadoop/dfs/dfs/name
-
-  datanode:
-    image: apache/hadoop:3.5.0
-    container_name: datanode
-    command: ["hdfs", "datanode"]
-    ports:
-      - "9864:9864"
     env_file:
       - ./configs/hadoop.env
     environment:
-      - ENSURE_NAMENODE_DIR=/opt/hadoop/dfs/dfs/name
+      HADOOP_NODE_TYPE: namenode
+    ports:
+      - "9870:9870"
+      - "9000:9000"
     volumes:
-      - hadoop_datanode:/opt/hadoop/dfs/dfs/data
+      - hadoop_namenode:/opt/hadoop/dfs/name
+    networks:
+      - net_bd
+
+  # --- CUSTOM ALPINE HADOOP 3.5.0 DATANODE ---
+  datanode:
+    image: owuordickson/hdfs-base:latest
+    container_name: datanode
+    hostname: datanode
     depends_on:
       - namenode
+    env_file:
+      - ./configs/hadoop.env
+    environment:
+      HADOOP_NODE_TYPE: datanode
+    ports:
+      - "9864:9864"
+    volumes:
+      - hadoop_datanode:/opt/hadoop/dfs/data
+    networks:
+      - net_bd
 
   # --- APACHE KAFKA BROKER ---
   kafka:
@@ -39,14 +45,17 @@ services:
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: 'broker,controller'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT'
-      KAFKA_LISTENERS: 'INTERNAL://:29092,EXTERNAL://:9092,CONTROLLER://:9093'
-      KAFKA_ADVERTISED_LISTENERS: 'INTERNAL://kafka:29092,EXTERNAL://localhost:9092'
-      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:9093'  # Fixed localhost to kafka for network clarity
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,CONTROLLER_MAP:PLAINTEXT'
+      KAFKA_LISTENERS: 'PLAINTEXT://:9092,CONTROLLER://:9093'
+      # This forces Kafka to ALWAYS advertise 'kafka:9092' to everything
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:9092'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:9093'
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
-      KAFKA_INTER_BROKER_LISTENER_NAME: 'INTERNAL'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+    networks:
+      - net_bd
 
-  # --- SPARK 4.0.0 ENGINE ---
+  # --- SPARK 4.1.2 ENGINE ---
   spark-master:
     image: apache/spark:4.1.2-python3
     container_name: spark-master
@@ -57,6 +66,8 @@ services:
     command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.master.Master"]
     volumes:
       - ./code/spark-apps:/opt/spark/work-dir
+    networks:
+      - net_bd
 
   spark-worker:
     image: apache/spark:4.1.2-python3
@@ -68,6 +79,8 @@ services:
     command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077"]
     volumes:
       - ./code/spark-apps:/opt/spark/work-dir
+    networks:
+      - net_bd
 
   # --- APACHE ZEPPELIN NOTEBOOK ---
   zeppelin:
@@ -76,14 +89,21 @@ services:
     ports:
       - "8082:8080"  # Exposes Zeppelin Web UI on local port 8082
     environment:
-      ZEPPELIN_ADDR: "0.0.0.0"
+      # --- YOUR COMPLETE SPARK & HADOOP ENV MAPS ---
+      MASTER: "spark://spark-master:7077"
       SPARK_MASTER: "spark://spark-master:7077"
+      SPARK_MASTER_URL: "spark://spark-master:7077"
+      CORE_CONF_fs_defaultFS: "hdfs://namenode:9000"
       HADOOP_CONF_DIR: "/opt/hadoop/etc/hadoop"
+      # Tells Zeppelin where the mounted binary files are located
+      SPARK_HOME: "/opt/spark"
     volumes:
       - zeppelin_notebooks:/opt/zeppelin/notebook
     depends_on:
       - spark-master
       - namenode
+    networks:
+      - net_bd
 
   # --- NODE-RED DATA GENERATOR ---
   nodered:
@@ -95,9 +115,15 @@ services:
       - nodered_data:/data
     depends_on:
       - kafka
+    networks:
+      - net_bd
 
 volumes:
   hadoop_namenode:
   hadoop_datanode:
   zeppelin_notebooks:
   nodered_data:
+
+networks:
+  net_bd:
+    driver: bridge
