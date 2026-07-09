@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   # --- CUSTOM ALPINE HADOOP 3.5.0 NAMENODE ---
@@ -66,7 +65,7 @@ services:
 
   # --- SPARK 4.1.2 ENGINE ---
   spark-master:
-    image: apache/spark:4.1.2-python3
+    image: apache/spark:4.1.2-scala2.13-java21-python3-ubuntu
     container_name: spark-master
     hostname: spark-master
     ports:
@@ -79,7 +78,7 @@ services:
       - net_bd
 
   spark-worker:
-    image: apache/spark:4.1.2-python3
+    image: apache/spark:4.1.2-scala2.13-java21-python3-ubuntu
     container_name: spark-worker
     depends_on:
       - spark-master
@@ -93,19 +92,23 @@ services:
 
   # --- APACHE ZEPPELIN NOTEBOOK ---
   zeppelin:
-    image: apache/zeppelin:0.12.1
+    build:
+      context: ./builds/zeppelin-spark  # Zeppelin image with spark-shell commands
+
     container_name: zeppelin
     ports:
       - "8082:8080"  # Exposes Zeppelin Web UI on local port 8082
     environment:
-      MASTER: "spark://spark-master:7077"
-      SPARK_MASTER: "spark://spark-master:7077"
-      SPARK_MASTER_URL: "spark://spark-master:7077"
+      #MASTER: "spark://spark-master:7077"
+      #SPARK_MASTER: "spark://spark-master:7077"
+      #SPARK_MASTER_URL: "spark://spark-master:7077"
       CORE_CONF_fs_defaultFS: "hdfs://namenode:9000"
-      HADOOP_CONF_DIR: "/opt/hadoop/etc/hadoop"
+      HADOOP_CONF_DIR: "/etc/hadoop"
       SPARK_HOME: /opt/spark
     volumes:
+      #- ./configs/zeppelin.conf:/opt/spark/conf/spark-defaults.conf:ro
       - zeppelin_notebooks:/opt/zeppelin/notebook
+      - zeppelin_logs:/opt/zeppelin/logs
     depends_on:
       - spark-master
       - namenode
@@ -129,6 +132,7 @@ volumes:
   hadoop_namenode:
   hadoop_datanode:
   zeppelin_notebooks:
+  zeppelin_logs:
   nodered_data:
 
 networks:
