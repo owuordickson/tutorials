@@ -25,7 +25,9 @@ All these software are accessible from your browser after starting their respect
 * Node-RED: <http://localhost:1881>
 * Namenode: <http://localhost:9870>
 * Zeppelin: <http://localhost:8082>
-* Spark: <http://localhost:8083>
+* Spark-Master: <http://localhost:8080>
+* Spark-Worker: <http://localhost:8081>
+
 
 
 
