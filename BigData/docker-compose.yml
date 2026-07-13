@@ -1,163 +1,153 @@
+
 services:
-
-  node-red:
-    image: nodered/node-red:latest
-    container_name: nodered
-    ports:
-      - "1881:1880"
-    volumes:
-      - nodered_data:/data
-    networks:
-      - net_bd
-
+  # --- CUSTOM ALPINE HADOOP 3.5.0 NAMENODE ---
   namenode:
-    image: owuordickson/hdfs-namenode:0.0.1
+    image: owuordickson/hdfs-base:latest
     container_name: namenode
     hostname: namenode
+    env_file:
+      - ./configs/hadoop.env
+    environment:
+      HADOOP_NODE_TYPE: namenode
     ports:
       - "9870:9870"
       - "9000:9000"
-    environment:
-      CLUSTER_NAME: test
-    env_file:
-      - ./configs/hadoop.env
     volumes:
-      - hadoop_namenode:/hadoop/dfs/name
+      - hadoop_namenode:/opt/hadoop/dfs/name
     networks:
       - net_bd
 
+  # --- CUSTOM ALPINE HADOOP 3.5.0 DATANODE ---
   datanode:
-    image: owuordickson/hdfs-datanode:0.0.1
+    image: owuordickson/hdfs-base:latest
     container_name: datanode
     hostname: datanode
     depends_on:
       - namenode
-    ports:
-      - "9864:9864"
-    environment:
-      SERVICE_PRECONDITION: "namenode:9870"
     env_file:
       - ./configs/hadoop.env
+    environment:
+      HADOOP_NODE_TYPE: datanode
+    ports:
+      - "9864:9864"
     volumes:
-      - hadoop_datanode:/hadoop/dfs/data
+      - hadoop_datanode:/opt/hadoop/dfs/data
     networks:
       - net_bd
 
+  # --- APACHE KAFKA BROKER ---
+  kafka:
+    image: apache/kafka:4.3.1
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      # KRaft Specific Engine Configurations
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:29093"
+      
+      # Network Listeners Setup (Internal Docker Mesh + External Host Mapping)
+      # Ensure 0.0.0.0 is used for listeners so it binds to all interfaces
+      KAFKA_LISTENERS: "INTERNAL://0.0.0.0:29092,EXTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:29093"
+      
+      # Tells Node-RED to talk to "kafka:29092" and host machine to talk to "localhost:9092"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka:29092,EXTERNAL://localhost:9092"
+      
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT"
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
+      
+      # Basic Cluster Configuration Properties
+      KAFKA_LOG_DIRS: "/var/lib/kafka/data"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    networks:
+      - net_bd
+
+  # --- SPARK 3.5.0 ENGINE ---
   spark-master:
-    image: apache/spark:3.5.1
+    image: apache/spark:3.5.0
     container_name: spark-master
     hostname: spark-master
-    user: root
-    depends_on:
-      - namenode
-      - datanode
-    command: >
-      /opt/spark/bin/spark-class
-      org.apache.spark.deploy.master.Master
-    ports:
-      - "7077:7077"
-      - "8083:8080"
+    # Tells the entrypoint script to launch the Master class directly in the foreground
+    command: 
+      - /opt/spark/bin/spark-class 
+      - org.apache.spark.deploy.master.Master
     environment:
-      SPARK_MASTER_HOST: spark-master
-
-      # HDFS
-      CORE_CONF_fs_defaultFS: hdfs://namenode:9000
-      HADOOP_CONF_DIR: /opt/hadoop/etc/hadoop
-
+      - SPARK_NO_DAEMONIZE=true
+    ports:
+      - "8080:8080"
+      - "7077:7077"
     volumes:
-      - ./src/spark-apps:/opt/spark/work-dir
-      - ./configs/hadoop:/opt/hadoop/etc/hadoop:ro
-      - ./configs/spark/jars_dir:/opt/spark/ivy
+      - ./code/spark-apps:/home/
+      - spark-shared-bin:/opt/spark
     networks:
       - net_bd
 
   spark-worker:
-    image: apache/spark:3.5.1
-    container_name: spark-worker
+    image: apache/spark:3.5.0
     hostname: spark-worker
-    user: root
+    container_name: spark-worker
+    command: 
+      - /opt/spark/bin/spark-class 
+      - org.apache.spark.deploy.worker.Worker 
+      - spark://spark-master:7077
+    environment:
+      - SPARK_NO_DAEMONIZE=true
     depends_on:
       - spark-master
-    command: >
-      /opt/spark/bin/spark-class
-      org.apache.spark.deploy.worker.Worker
-      spark://spark-master:7077
-    environment:
-      SPARK_WORKER_MEMORY: 2G
-      SPARK_WORKER_CORES: 2
-
-      CORE_CONF_fs_defaultFS: hdfs://namenode:9000
-      HADOOP_CONF_DIR: /opt/hadoop/etc/hadoop
-
+    ports:
+      - "8081:8081"
     volumes:
-      - ./src/spark-apps:/opt/spark/work-dir
-      - ./configs/hadoop:/opt/hadoop/etc/hadoop:ro
-      - ./configs/spark/jars_dir:/opt/spark/ivy
+      - ./code/spark-apps:/home/
+      - spark-shared-bin:/opt/spark
     networks:
       - net_bd
 
+  # --- APACHE ZEPPELIN NOTEBOOK ---
   zeppelin:
-    image: apache/zeppelin:0.11.2
+    image: apache/zeppelin:0.12.1
     container_name: zeppelin
+    ports:
+      - "8082:8080"  # Exposes Zeppelin Web UI on local port 8082
+    environment:
+      - ZEPPELIN_ADDR=0.0.0.0
+      - SPARK_HOME=/opt/spark
+      - ZEPPELIN_SPARK_MASTER=spark://spark-master:7077
+      # Passes the HDFS configuration to Spark's underlying context
+      - SPARK_SUBMIT_OPTIONS=--master spark://spark-master:7077 --conf spark.hadoop.fs.defaultFS=hdfs://namenode:9000
+    volumes:
+      # Shares identical Spark 3.5 binaries with the Master node
+      - spark-shared-bin:/opt/spark:ro      
+      - zeppelin_notebooks:/opt/zeppelin/notebook
+      - zeppelin_logs:/opt/zeppelin/logs
     depends_on:
       - spark-master
       - namenode
+    networks:
+      - net_bd
+
+  # --- NODE-RED DATA GENERATOR ---
+  nodered:
+    image: nodered/node-red:latest
+    container_name: nodered
     ports:
-      - "8082:8080"
-    environment:
-      MASTER: spark://spark-master:7077
-      SPARK_MASTER: spark://spark-master:7077
-      SPARK_MASTER_URL: spark://spark-master:7077
-      CORE_CONF_fs_defaultFS: hdfs://namenode:9000
-      HADOOP_CONF_DIR: /opt/hadoop/etc/hadoop
+      - "1881:1880"  # Node-RED Visual Workflow UI
     volumes:
-      - zeppelin_notebook:/opt/zeppelin/notebook
-      - zeppelin_logs:/opt/zeppelin/logs
-      - ./configs/hadoop:/opt/hadoop/etc/hadoop:ro
-    networks:
-      - net_bd
-
-  zookeeper:
-    image: zookeeper:3.9.3
-    container_name: zookeeper
-    hostname: zookeeper
-    ports:
-      - "2181:2181"
-    networks:
-      - net_bd
-
-  kafka:
-    image: apache/kafka:3.9.0
-    container_name: kafka
-    hostname: kafka
+      - nodered_data:/data
     depends_on:
-      - zookeeper
-    ports:
-      - "9092:9092"
-      - "9093:9093"
-    environment:
-      KAFKA_NODE_ID: 1
-      KAFKA_PROCESS_ROLES: broker
-
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-
-      KAFKA_LISTENERS: PLAINTEXT://:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
-
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      - kafka
     networks:
       - net_bd
 
 volumes:
-  nodered_data:
-  zeppelin_logs:
-  zeppelin_notebook:
   hadoop_namenode:
   hadoop_datanode:
+  spark-shared-bin:
+  zeppelin_notebooks:
+  zeppelin_logs:
+  nodered_data:
 
 networks:
   net_bd:

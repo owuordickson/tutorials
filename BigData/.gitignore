@@ -1,1 +1,5 @@
 # ignore data folder
+*.tar.gz
+*.tgz
+
+code/spark-apps/spark/

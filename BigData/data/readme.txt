@@ -1,8 +1,10 @@
 In order to upload a CSV file to HDF5, we do the following:
 
-1. Create a folder "data" from the namenode URL - http://localhost:9870
+1. Navigate to (namenode) http://localhost:9870
 
-2. To save CSV file, go into the namenode terminal and do the following:
+2 . Create a folder "data" under "Utilities>>Browse the file system"
+
+3. To save CSV file, go into the namenode terminal and do the following:
 
     a. Create a 'csv' file using "touch bank.csv"
 
@@ -12,9 +14,9 @@ In order to upload a CSV file to HDF5, we do the following:
 
     d. Delete the redundant csv file via "rm bank.csv"
 
-3. To preview the CSV file: hdfs dfs -cat /data/bank.csv | head
+4. To preview the CSV file: hdfs dfs -cat /data/bank.csv | head
 
-4. Perform interactive analytics using a Zeppelin notebook
+5. Perform interactive analytics using a Zeppelin notebook (import zeppelin-notes\analytics_from_hdf5.json)
 
 
 -------------------------------------------------------------------------
@@ -23,14 +25,21 @@ Write IoT data to Hadoop HDF5 using Node-RED and Kafka
 
 1. Create Kafka topic 'iot-temp' from the terminal:
 
-    /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic iot-temp --bootstrap-server kafka:9092
+    /opt/kafka/bin/kafka-topics.sh \
+  --bootstrap-server localhost:9092 \
+  --create \
+  --topic iot-temp \
+  --replication-factor 1
+
+    * Check active topics:
+     /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
 
     * Check if messages are arriving?
-    /opt/bitnami/kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --from-beginning --topic iot-temp --partition 0
+    /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --from-beginning --topic iot-temp
 
 2. Using node-red:
 
-    a. Import the following libraries from Palette 'node-red-contrib-kafka-node-latest'
+    a. Import the following libraries from Palette 'node-red-contrib-kafkajs' and, 'node-red-contrib-aedes'
 
     b. Import and deploy the flow 'mqtt-kafka.json'
 
@@ -40,11 +49,11 @@ Write IoT data to Hadoop HDF5 using Node-RED and Kafka
 
     a. cd /home
 
-    b. spark-shell --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.8 -i kafka_stream.scala spark://spark-master:7077
+    b. /opt/spark/bin/spark-shell --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 -i kafka_stream.scala spark://spark-master:7077
 
 4. Using Zeppelin:
 
-    a. Copy notebook and run it
+    a. Copy notebook and run it (import \zeppelin-notes\analytics_from_kafka.zpln)
 
 
 5. Exercise
