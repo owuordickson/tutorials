@@ -29,18 +29,17 @@ Write IoT data to Hadoop HDF5 using Node-RED and Kafka
   --bootstrap-server localhost:9092 \
   --create \
   --topic iot-temp \
-  --partitions 1 \
   --replication-factor 1
 
     * Check active topics:
      /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
 
     * Check if messages are arriving?
-    /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --from-beginning --topic iot-temp --partition 1
+    /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --from-beginning --topic iot-temp
 
 2. Using node-red:
 
-    a. Import the following libraries from Palette 'node-red-contrib-kafka-node-latest' and, 'node-red-contrib-aedes'
+    a. Import the following libraries from Palette 'node-red-contrib-kafkajs' and, 'node-red-contrib-aedes'
 
     b. Import and deploy the flow 'mqtt-kafka.json'
 
@@ -50,7 +49,7 @@ Write IoT data to Hadoop HDF5 using Node-RED and Kafka
 
     a. cd /home
 
-    b. spark-shell --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.8 -i kafka_stream.scala spark://spark-master:7077
+    b. /opt/spark/bin/spark-shell --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 -i kafka_stream.scala spark://spark-master:7077
 
 4. Using Zeppelin:
 

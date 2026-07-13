@@ -7,29 +7,6 @@
         "info": ""
     },
     {
-        "id": "77ca1f6be788039c",
-        "type": "aedes broker",
-        "z": "1f052dbab45d5c85",
-        "name": "",
-        "mqtt_port": 1883,
-        "mqtt_ws_bind": "port",
-        "mqtt_ws_port": null,
-        "mqtt_ws_path": "",
-        "cert": "",
-        "key": "",
-        "certname": "",
-        "keyname": "",
-        "persistence_bind": "memory",
-        "dburl": "",
-        "usetls": false,
-        "x": 370,
-        "y": 80,
-        "wires": [
-            [],
-            []
-        ]
-    },
-    {
         "id": "4893c8f6199d55aa",
         "type": "mqtt out",
         "z": "1f052dbab45d5c85",
@@ -115,18 +92,6 @@
         "wires": []
     },
     {
-        "id": "e0554fe317e13fc9",
-        "type": "kafka",
-        "z": "1f052dbab45d5c85",
-        "brokerUrl": "kafka:9092",
-        "topic": "iot-temp",
-        "partition": "0",
-        "debug": "",
-        "x": 810,
-        "y": 240,
-        "wires": []
-    },
-    {
         "id": "c6646bbef9267ec2",
         "type": "function",
         "z": "1f052dbab45d5c85",
@@ -141,8 +106,8 @@
         "y": 300,
         "wires": [
             [
-                "e0554fe317e13fc9",
-                "78503188264c251c"
+                "78503188264c251c",
+                "e24eb61a8c9b70e2"
             ]
         ]
     },
@@ -203,6 +168,49 @@
         ]
     },
     {
+        "id": "77ca1f6be788039c",
+        "type": "aedes broker",
+        "z": "1f052dbab45d5c85",
+        "name": "",
+        "mqtt_port": 1883,
+        "mqtt_ws_bind": "port",
+        "mqtt_ws_port": null,
+        "mqtt_ws_path": "",
+        "cert": "",
+        "key": "",
+        "certname": "",
+        "keyname": "",
+        "persistence_bind": "memory",
+        "dburl": "",
+        "usetls": false,
+        "x": 370,
+        "y": 80,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "e24eb61a8c9b70e2",
+        "type": "kafkajs-producer",
+        "z": "1f052dbab45d5c85",
+        "name": "KRaft-Cluster",
+        "client": "cd89d4269510e448",
+        "topic": "iot-temp",
+        "advancedoptions": false,
+        "acknowledge": "all",
+        "partition": "",
+        "headeritems": {},
+        "key": "",
+        "responsetimeout": 30000,
+        "transactiontimeout": 60000,
+        "metadatamaxage": 300000,
+        "allowautotopiccreation": false,
+        "x": 960,
+        "y": 260,
+        "wires": []
+    },
+    {
         "id": "b8de56e1ebf9fdbd",
         "type": "mqtt-broker",
         "name": "MQTT Broker",
@@ -231,5 +239,38 @@
         "willMsg": {},
         "userProps": "",
         "sessionExpiry": ""
+    },
+    {
+        "id": "cd89d4269510e448",
+        "type": "kafkajs-client",
+        "name": "",
+        "brokers": "kafka:29092",
+        "clientid": "",
+        "connectiontimeout": 3000,
+        "requesttimeout": 25000,
+        "advancedretry": false,
+        "maxretrytime": 30000,
+        "initialretrytime": 300,
+        "factor": 0.2,
+        "multiplier": 2,
+        "retries": 5,
+        "auth": "none",
+        "tlsselfsign": false,
+        "tlscacert": "",
+        "tlsclientcert": "",
+        "tlsprivatekey": "",
+        "tlspassphrase": "",
+        "saslssl": true,
+        "saslmechanism": "plain",
+        "loglevel": "error"
+    },
+    {
+        "id": "c9fe85053bb201c3",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-aedes": "1.2.0",
+            "node-red-contrib-kafkajs": "0.0.7"
+        }
     }
 ]
