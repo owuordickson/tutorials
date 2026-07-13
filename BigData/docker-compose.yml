@@ -63,50 +63,61 @@ services:
     networks:
       - net_bd
 
-  # --- SPARK 4.1.2 ENGINE ---
+  # --- SPARK 3.5.0 ENGINE ---
   spark-master:
-    image: apache/spark:4.1.2-scala2.13-java21-python3-ubuntu
+    image: apache/spark:3.5.0
     container_name: spark-master
     hostname: spark-master
+    # Tells the entrypoint script to launch the Master class directly in the foreground
+    command: 
+      - /opt/spark/bin/spark-class 
+      - org.apache.spark.deploy.master.Master
+    environment:
+      - SPARK_NO_DAEMONIZE=true
     ports:
       - "8080:8080"
       - "7077:7077"
-    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.master.Master"]
     volumes:
       - ./code/spark-apps:/home/
+      - spark-shared-bin:/opt/spark
     networks:
       - net_bd
 
   spark-worker:
-    image: apache/spark:4.1.2-scala2.13-java21-python3-ubuntu
+    image: apache/spark:3.5.0
+    hostname: spark-worker
     container_name: spark-worker
+    command: 
+      - /opt/spark/bin/spark-class 
+      - org.apache.spark.deploy.worker.Worker 
+      - spark://spark-master:7077
+    environment:
+      - SPARK_NO_DAEMONIZE=true
     depends_on:
       - spark-master
     ports:
       - "8081:8081"
-    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077"]
     volumes:
       - ./code/spark-apps:/home/
+      - spark-shared-bin:/opt/spark
     networks:
       - net_bd
 
   # --- APACHE ZEPPELIN NOTEBOOK ---
   zeppelin:
-    build:
-      context: ./builds/zeppelin-spark  # Zeppelin image with spark-shell commands
-
+    image: apache/zeppelin:0.12.1
     container_name: zeppelin
     ports:
       - "8082:8080"  # Exposes Zeppelin Web UI on local port 8082
     environment:
-      #MASTER: "spark://spark-master:7077"
-      #SPARK_MASTER: "spark://spark-master:7077"
-      #SPARK_MASTER_URL: "spark://spark-master:7077"
-      CORE_CONF_fs_defaultFS: "hdfs://namenode:9000"
-      HADOOP_CONF_DIR: "/etc/hadoop"
-      SPARK_HOME: /opt/spark
+      - ZEPPELIN_ADDR=0.0.0.0
+      - SPARK_HOME=/opt/spark
+      - ZEPPELIN_SPARK_MASTER=spark://spark-master:7077
+      # Passes the HDFS configuration to Spark's underlying context
+      - SPARK_SUBMIT_OPTIONS=--master spark://spark-master:7077 --conf spark.hadoop.fs.defaultFS=hdfs://namenode:9000
     volumes:
-      #- ./configs/zeppelin.conf:/opt/spark/conf/spark-defaults.conf:ro
+      # Shares identical Spark 3.5 binaries with the Master node
+      - spark-shared-bin:/opt/spark:ro      
       - zeppelin_notebooks:/opt/zeppelin/notebook
       - zeppelin_logs:/opt/zeppelin/logs
     depends_on:
@@ -131,6 +142,7 @@ services:
 volumes:
   hadoop_namenode:
   hadoop_datanode:
+  spark-shared-bin:
   zeppelin_notebooks:
   zeppelin_logs:
   nodered_data:
