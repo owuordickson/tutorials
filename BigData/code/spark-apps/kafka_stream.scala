@@ -1,7 +1,7 @@
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.streaming.Trigger
-import org.apache.spark.sql.types.{IntegerType,StringType,StructType}
+import org.apache.spark.sql.types.{IntegerType,StringType,StructType,LongType}
 
 
 val spark = SparkSession.builder.appName("KafkaStream").getOrCreate()
@@ -20,7 +20,7 @@ val string_df = df.selectExpr("CAST(value AS STRING)")
 
 val schema = new StructType()
     .add("source",StringType)
-    .add("timestamp",IntegerType)
+    .add("timestamp",LongType)
     .add("value",IntegerType)
     .add("status",StringType)
 
